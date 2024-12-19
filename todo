@@ -1,0 +1,9 @@
++ get openGL version 4.6
+
+- get simple compute shader to run
+	? generate buffers
+
+- generate particles
+	- render particles
+	? create hash function for psuedo random numbers
+
