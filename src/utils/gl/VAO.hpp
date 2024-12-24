@@ -7,6 +7,7 @@ Created on: 07/09/2024
 #include <GLAD/glad.h>
 
 #include "VBO.hpp"
+#include "SSBO.hpp"
 
 class VAO
 {
@@ -19,6 +20,8 @@ public:
 
 	// Links a VBO to the VAO using a certain layout
 	void link_attr(VBO& VBO, GLuint layout, GLuint n, GLenum type, GLsizeiptr stride, void *offset);
+	// Links a VBO to the VAO using a certain layout
+	void link_attr_ssbo(SSBO& ssbo, GLuint layout, GLuint n, GLenum type, GLsizeiptr stride, void *offset);
 	// Binds the VAO
 	void bind();
 	// Unbinds the VAO

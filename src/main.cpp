@@ -1,85 +1,49 @@
-/*
-Created by: Emily (Em_iIy) Winnink
-Created on: 16/12/2024
-*/
+// /*
+// Created by: Emily (Em_iIy) Winnink
+// Created on: 16/12/2024
+// */
 
 #include "utils.hpp"
+#include "emlm/emlm.hpp"
+#include <cmath>
+#include <ctime>
 
-#define WIDTH 1000
-#define HEIGHT 1000
-#define TEXTURE_WIDTH 1000
-#define TEXTURE_HEIGHT 1000
+// #define WIDTH 1920
+// #define HEIGHT 1080
+#define WIDTH 1024
+#define HEIGHT 1024
+#define TEXTURE_WIDTH WIDTH
+#define TEXTURE_HEIGHT HEIGHT
+#define FOV 90.0f
 
+#define PARTICLE_COUNT 3048576
+// #define PARTICLE_COUNT 2000
 float		g_delta_time = 0.0f;
 
-// int	main(int argc, char **argv)
-// {
-// 	if (argc != 3)
-// 	{
-// 		std::cerr << "Invalid input!\n";
-// 		std::cerr << "Usage:\n";
-// 		std::cerr << "scop -c,--config <config file>\n";
-// 		std::cerr << "scop <object file> <texture file>" << std::endl;
-// 		return (1);
-// 	}
-// 	try
-// 	{
+void APIENTRY glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity,
+                            GLsizei length, const GLchar* message, const void* userParam) {
+    std::cerr << "GL CALLBACK: " << message << std::endl;
+}
 
-// 		if (std::string(argv[1]) == "-c" || std::string(argv[1]) == "--config")
-// 			Config::load(argv[2]);
-// 		else
-// 			Config::load(argv[1], argv[2]);
-// 		scop.init_gl(WIDTH, HEIGHT);
-// 		scop.init_resources();
-// 		print_controls();
-
-// 		glGenFramebuffers(1, &fbo);
-// 		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-	
-// 		init_render_texture(rtex);
-// 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, rtex, 0);
-
-// 		glGenRenderbuffers(1, &rbo);
-// 		glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-// 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, WIDTH, HEIGHT);
-// 		glBindRenderbuffer(GL_RENDERBUFFER, 0);
-// 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
-
-
-// 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-// 		{
-// 			std::cerr << "Frame buffer incomplete!" << std::endl;
-// 			throw std::exception();
-// 		}
-// 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-// 		while (!glfwWindowShouldClose(scop.window))
-// 		{
-// 			scop.update();
-// 			scop.draw_current();
-// 		}
-// 		clean();
-// 	}
-// 	catch(const std::exception& e)
-// 	{
-// 		clean();
-// 		return (1);
-// 	}
-// 	return (0);
-// }
 
 int main(int argc, char **argv)
 {
+	srand(std::time(NULL));
 	if (argc != 2)
 		return (1);
 	init_glfw();
-	GLFWwindow *window = init_window(800, 600, "particle-system", NULL, NULL);
+	GLFWwindow *window = init_window(WIDTH, HEIGHT, "particle-system", NULL, NULL);
 
+	uint	random = (uint)((float)rand() / 2147483647.0f * 10000.0f);
+    // Enable OpenGL debug output
+    glEnable(GL_DEBUG_OUTPUT);
+    glDebugMessageCallback(glDebugOutput, nullptr);
 
 	GLfloat	vertices[] = {
-		1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-		-1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-		1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-		-1.0f, -1.0f, 0.0f, 0.0f, 0.0f
+		1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+		-1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+		1.0f, -1.0f, 1.0f, 1.0f, 0.0f,
+		-1.0f, -1.0f, 1.0f, 0.0f, 0.0f
 	};
 
 	GLuint indices[] = {
@@ -87,65 +51,104 @@ int main(int argc, char **argv)
 		0, 2, 3
 	};
 
-	VAO	vao(1);
-	vao.bind();
-	VBO	vbo(vertices, sizeof(vertices));
-	EBO	ebo(indices, sizeof(indices));
-	vao.link_attr(vbo, 0, 3, GL_FLOAT, sizeof(GLfloat) * 5, (void *)0);
-	vao.link_attr(vbo, 1, 2, GL_FLOAT, sizeof(GLfloat) * 5, (void *)(sizeof(GLfloat) * 3));
-	vao.unbind();
-	vbo.unbind();
+
+	VAO particle_vao(1);
+	particle_vao.bind();
+	SSBO ssbo(NULL, sizeof(mlm::vec4) * 2 * PARTICLE_COUNT, GL_DYNAMIC_DRAW);
+	particle_vao.link_attr_ssbo(ssbo, 0, 4, GL_FLOAT, sizeof(GLfloat) * 8, (void *)0);
+	particle_vao.link_attr_ssbo(ssbo, 1, 4, GL_FLOAT, sizeof(GLfloat) * 8, (void *)(sizeof(GLfloat) * 4));
+	particle_vao.unbind();
+
+
+	// VAO	vao(1);
+	// vao.bind();
+	// VBO	vbo(vertices, sizeof(vertices));
+	// EBO	ebo(indices, sizeof(indices));
+	// vao.link_attr(vbo, 0, 3, GL_FLOAT, sizeof(GLfloat) * 5, (void *)0);
+	// vao.link_attr(vbo, 1, 2, GL_FLOAT, sizeof(GLfloat) * 5, (void *)(sizeof(GLfloat) * 3));
+	// vao.unbind();
+	// vbo.unbind();
+
+
 
 	ComputeShader	comp_shader(argv[1]);
 	Shader			shader("resources/shaders/default.vert", "resources/shaders/default.frag");
+	ComputeShader	init_sphere("resources/shaders/sphere_init.comp");
+	ComputeShader	physics("resources/shaders/physics.comp");
+	Shader			particle_shader("resources/shaders/particle.vert", "resources/shaders/particle.frag");
 
-	GLuint texture;
-	glGenTextures(1, &texture);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, TEXTURE_WIDTH, TEXTURE_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
+	init_sphere.use();
+	ssbo.bind();
+	init_sphere.set_float("radius", 0.5f);
+	init_sphere.set_uint("frame", random);
+	glDispatchCompute((GLuint)PARTICLE_COUNT / 16, 1, 1);
+	glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
 
-	glBindImageTexture(0, texture, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
+	// GLuint texture;
+	// glGenTextures(1, &texture);
+	// glActiveTexture(GL_TEXTURE0);
+	// glBindTexture(GL_TEXTURE_2D, texture);
+	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	// glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, TEXTURE_WIDTH, TEXTURE_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
 
-	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+	// glBindImageTexture(0, texture, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 
 	// timing 
-	float deltaTime = 0.0f; // time between current frame and last frame
-	float lastFrame = 0.0f; // time of last frame
 	int fCounter = 0;
 	float ftime = 0.0f;
 
-	// Set frame time
-
 	while (!glfwWindowShouldClose(window))
 	{
-		float currentFrame = glfwGetTime();
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		float time = glfwGetTime();
 		input::process(window);
-		deltaTime = currentFrame - lastFrame;
-		lastFrame = currentFrame;
+		g_delta_time = delta_time_update();
 		if(fCounter > 500) {
-				std::cout << "FPS: " << 1 / deltaTime << "\t";
-				std::cout << "FPS: " << 1 / (ftime / fCounter) << std::endl;
+				std::cout << "FPS: " << 1 / (ftime / fCounter) << " " << random << std::endl;
 				fCounter = 0;
 				ftime = 0.0f;
 		} else {
 			fCounter++;
-			ftime += deltaTime;
+			ftime += g_delta_time;
 		}	
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		comp_shader.use();
-		comp_shader.set_float("t", currentFrame);
-		glDispatchCompute((GLuint)TEXTURE_WIDTH/10, (GLuint)TEXTURE_HEIGHT/10, 1);
-		shader.use();
-		vao.bind();
-		glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, NULL);
+		physics.use();
+		ssbo.bind();
+		physics.set_vec3("gravity", mlm::vec3(0.2f * sinf(time * 2.0f), 0.3f, 0.2f * cosf(time * 2.0f)));
+		physics.set_float("delta_time", g_delta_time);
+		glDispatchCompute((GLuint)PARTICLE_COUNT / 16, 1, 1);
+		glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
+		// comp_shader.use();
+		// comp_shader.set_float("fov", FOV);
+		// comp_shader.set_vec3("light", mlm::vec3(10.0f * sinf(time * 2.0f), 5.0f, -10.0f + 10.0f * cosf(time * 2.0f)));
+		// comp_shader.set_vec3("sphere_c", mlm::vec3(0.0f, 0.0f, -10.0f));
+		// comp_shader.set_vec3("sphere_c", mlm::vec3(2.0f * sinf(time), 1.0f * sinf(time * 2.0f), -10.0f + 2.0f * cosf(time)));
+		// glDispatchCompute((GLuint)TEXTURE_WIDTH / 16, (GLuint)TEXTURE_HEIGHT / 16, 1);
+		// shader.use();
+		// glActiveTexture(GL_TEXTURE0);
+		// glBindTexture(GL_TEXTURE_2D, texture);
+		// vao.bind();
+		// glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+		// glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, NULL);
+
+		mlm::mat4	model(1.0f);
+		// model = mlm::rotate(model, mlm::radians(10.0f * time), mlm::vec3(1.0, 0.0, 0.0));
+		model = mlm::translate(model, mlm::vec3(0.0f, 0.0f, -10.0f));
+		particle_shader.use();
+		mlm::mat4 projection = mlm::perspective(mlm::radians(FOV), WIDTH / HEIGHT, 0.1f, 100.0f);
+		particle_shader.set_mat4("model", model);
+		particle_shader.set_mat4("projection", projection);
+		particle_shader.set_vec3("gravity", mlm::vec3(0.2f * sinf(time * 2.0f), 0.3f, 0.2f * cosf(time * 2.0f)));
+		particle_vao.bind();
+		// glDrawArraysInstanced(GL_POINTS, 0, 1, PARTICLE_COUNT);
+		glDrawArrays(GL_POINTS, 0, PARTICLE_COUNT);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 }
+

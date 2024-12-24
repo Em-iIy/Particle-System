@@ -62,7 +62,27 @@ void	ComputeShader::del()
 	glDeleteProgram(this->ID);
 }
 
+void ComputeShader::set_int(const std::string &name, int value) const
+{
+	glUniform1i(glGetUniformLocation(this->ID, name.c_str()), value);
+}
+
+void ComputeShader::set_uint(const std::string &name, uint value) const
+{
+	glUniform1ui(glGetUniformLocation(this->ID, name.c_str()), value);
+}
+
 void ComputeShader::set_float(const std::string &name, float value) const
 {
 	glUniform1f(glGetUniformLocation(this->ID, name.c_str()), value);
+}
+
+void ComputeShader::set_vec3(const std::string &name, const mlm::vec3 &value) const
+{
+	glUniform3f(glGetUniformLocation(this->ID, name.c_str()), value.x, value.y, value.z);
+}
+
+void ComputeShader::set_vec4(const std::string &name, const mlm::vec4 &value) const
+{
+	glUniform4f(glGetUniformLocation(this->ID, name.c_str()), value.x, value.y, value.z, value.w);
 }

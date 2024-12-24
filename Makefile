@@ -17,6 +17,7 @@ FILES_SRCS =	main.cpp \
 				VAO.cpp \
 				VBO.cpp \
 				EBO.cpp \
+				SSBO.cpp \
 				bmp.cpp \
 				textures.cpp \
 				input.cpp \

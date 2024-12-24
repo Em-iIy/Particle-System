@@ -25,6 +25,15 @@ void VAO::link_attr(VBO& VBO, GLuint layout, GLuint n, GLenum type, GLsizeiptr s
 	VBO.unbind();
 }
 
+// Links a VBO to the VAO using a certain layout
+void VAO::link_attr_ssbo(SSBO& ssbo, GLuint layout, GLuint n, GLenum type, GLsizeiptr stride, void *offset)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, ssbo.ID);
+	glVertexAttribPointer(layout, n, type, GL_FALSE, stride, offset);
+	glEnableVertexAttribArray(layout);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
 // Binds the VAO
 void VAO::bind()
 {

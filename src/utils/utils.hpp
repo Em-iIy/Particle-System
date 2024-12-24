@@ -9,6 +9,7 @@ Created on: 16/12/2024
 #include "gl/VAO.hpp"
 #include "gl/VBO.hpp"
 #include "gl/EBO.hpp"
+#include "gl/SSBO.hpp"
 #include "gl/Shader.hpp"
 #include "gl/ComputeShader.hpp"
 #include "gl/Window.hpp"

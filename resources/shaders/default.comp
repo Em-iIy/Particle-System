@@ -1,22 +1,154 @@
 #version 430 core
 
-layout (local_size_x = 10, local_size_y = 10, local_size_z = 1) in;
+layout (local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
 
 layout (rgba32f, binding = 0) uniform image2D img_output;
 
-layout (location = 0) uniform float t;
+layout (location = 0) uniform float fov;
+layout (location = 1) uniform vec3 light;
+
+layout (location = 2) uniform vec3	sphere_c;
+
+const float epsilon = 1.1920929e-7;
+
+struct Camera {
+	vec3	center;
+	vec3	right;
+	vec3	up;
+	vec3	front;
+	float	fov;
+};
+
+struct Ray {
+	vec3	o;
+	vec3	d;
+};
+
+struct Sphere {
+	vec3	c;
+	float	r;
+};
+
+struct Triangle {
+	vec3	a;
+	vec3	b;
+	vec3	c;
+};
+
+
+vec3	calc_ray_dir(ivec2 pixel_coords, ivec2 screensize, Camera cam)
+{
+	vec2	ndc = (vec2(pixel_coords) + 0.5) / vec2(screensize) * 2.0 - 1.0;
+
+	float	aspect = float(screensize.x) / float(screensize.y);
+
+	float	scale = tan(radians(cam.fov * 0.5));
+	vec3	ray_dir = normalize(cam.front + ndc.x * aspect * scale * cam.right + ndc.y * scale * cam.up);
+	return (ray_dir);
+}
+
+float	quadratic_formula(const float a, const float b, const float c)
+{
+	const float discriminant = b * b - 4 * a * c;
+	float t1;
+	float t2;
+
+	if (discriminant < 0 || a == 0)
+		return (-1.0);
+	t1 = (-b - sqrt(discriminant)) / (2 * a);
+	t2 = (-b + sqrt(discriminant)) / (2 * a);
+	if (t1 < t2)
+		return (t1);
+	return (t2);
+}
+
+float	sphere_col(Sphere s, Ray r)
+{
+	const vec3	v = r.o - s.c;
+
+	return (quadratic_formula(dot(r.d, r.d), 2 * dot(v, r.d), dot(v, v) - s.r * s.r));
+}
+
+
+// https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm#C++_implementation
+float	triangle_col(Triangle tri, Ray r)
+{
+	vec3	edge1 = tri.b - tri.a;
+	vec3	edge2 = tri.c - tri.a;
+	vec3	ray_cross_e2 = cross(r.d, edge2);
+	float	det = dot(edge1, ray_cross_e2);
+
+	if (det > -epsilon && det < epsilon)
+		return (-1.0);
+	
+	float	inv_det = 1.0 / det;
+	vec3	s = r.o - tri.a;
+	float	u = inv_det * dot(s, ray_cross_e2);
+
+	if ((u < 0 && abs(u) > epsilon) || (u > 1 && abs(u - 1) > epsilon))
+		return (-1.0);
+	
+	vec3	s_cross_e1 = cross(s, edge1);
+	float	v = inv_det * dot(r.d, s_cross_e1);
+
+	if ((v < 0 && abs(v) > epsilon) || (u + v > 1 && abs(u + v - 1) > epsilon))
+		return (-1.0);
+
+	float t = inv_det * dot(edge2, s_cross_e1);
+
+	if (t < epsilon)
+	{
+		return (-1.0);
+	}
+	return (t);
+}
+
+vec3	triangle_normal(Triangle tri)
+{
+	vec3	edge1 = tri.b - tri.a;
+	vec3	edge2 = tri.c - tri.a;
+	
+	return (normalize(cross(edge2, edge1)));
+}
+
+vec3	ray_point(Ray r, float t)
+{
+	return (r.o + r.d * t);
+}
+
 
 void main()
 {
-	vec4 value = vec4(0.0, 0.0, 0.0, 1.0);
-	ivec2 texel_coord = ivec2(gl_GlobalInvocationID.xy);
+	Camera		cam = Camera(vec3(0.0), vec3(1.0, 0.0, 0.0), vec3(0.0, 1.0, 0.0), vec3(0.0, 0.0, -1.0), fov);
 
-	float speed = 100;
-	float width = 1000;
+	Triangle	tri = Triangle(vec3(-5.0, -5.0, -10.0), vec3(5.0, -5.0, -10.0), vec3(0.0, -5.0, -15.0));
 
-	value.r = mod(float(texel_coord.x) + t * speed, width) / (gl_NumWorkGroups.x * gl_WorkGroupSize.x);
+	vec4	pixel = vec4(0.0, 0.0, 0.0, 1.0);
+	ivec2	pixel_coords = ivec2(gl_GlobalInvocationID.xy);
+	ivec2	image_size = imageSize(img_output);
 
-	value.b = float(texel_coord.y) / (gl_NumWorkGroups.y * gl_WorkGroupSize.y);
 
-	imageStore(img_output, texel_coord, value);
+	Ray		ray = Ray(cam.center, calc_ray_dir(pixel_coords, image_size, cam));
+	Sphere	sphere = Sphere(sphere_c, 1.0);
+
+	float t;
+	t = triangle_col(tri, ray);
+	// t = sphere_col(sphere, ray);
+	if (t >= 0.0)
+	{
+		pixel = vec4(0.4, 0.4, 1.0, 1.0);
+		vec3 p = ray_point(ray, t);
+		// vec3 normal = normalize(p - sphere.c);
+		vec3 normal = -triangle_normal(tri);
+		float diff = dot(normal, normalize(light - p));
+		if (diff > 0.0)
+		{
+			pixel.rgb = pixel.rgb * diff;
+		}
+		else
+		{
+			pixel.rgb = vec3(0.0);
+		}
+	}
+	imageStore(img_output, pixel_coords, pixel);
 }
