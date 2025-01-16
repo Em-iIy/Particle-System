@@ -60,6 +60,10 @@ void	delete_texture(uint texture)
 Tex2d::Tex2d(): wrap_s(GL_REPEAT), wrap_t(GL_REPEAT), filter_min(GL_NEAREST), filter_mag(GL_NEAREST)
 {}
 
+Tex2d::Tex2d(GLenum wrap, GLenum filter): wrap_s(wrap), wrap_t(wrap), filter_min(filter), filter_mag(filter)
+{}
+
+
 Tex2d::~Tex2d() {}
 
 void	Tex2d::load(const char *img)
@@ -103,6 +107,19 @@ void	Tex2d::load(const bmp_t &bmp)
 
 	// Generate mipmap for the texture
 	glGenerateMipmap(this->ID);
+}
+
+void	Tex2d::load_render_texture(GLsizei width, GLsizei height, GLenum format, GLenum type)
+{
+	glGenTextures(1, &this->ID);
+	this->bind();
+
+	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, type, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, this->wrap_s);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, this->wrap_t);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, this->filter_min);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, this->filter_mag);
 }
 
 void	Tex2d::load(const std::string &img)

@@ -3,8 +3,8 @@
 layout (local_size_x = 16, local_size_y = 1, local_size_z = 1) in;
 
 struct Particle {
-	vec4	pos;
-	vec4	dir;
+	vec3	pos;
+	vec3	dir;
 };
 
 layout (std430, binding = 0) buffer ParticleBuffer {
@@ -17,15 +17,8 @@ layout (location = 1) uniform float delta_time;
 void main()
 {
 	uint	index = gl_GlobalInvocationID.x;
-	vec3	gravity_dir = gravity - particles[index].pos.xyz;
-	// float	dist = length(gravity_dir);
-	// if (dist < 0.0001)
-	// {
-	// 	dist = 0.0001;
-	// }
+	vec3	gravity_dir = gravity - particles[index].pos;
 	gravity_dir = normalize(gravity_dir);
-	// particles[index].dir.xyz += (gravity_dir * 1.0/(dist * dist) * 0.00005) * delta_time;
-	particles[index].dir.xyz += (gravity_dir * 0.05) * delta_time;
-	particles[index].pos.xyz += particles[index].dir.xyz * delta_time;
-
+	particles[index].dir += gravity_dir * delta_time;
+	particles[index].pos += particles[index].dir * delta_time;
 }

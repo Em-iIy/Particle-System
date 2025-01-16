@@ -24,26 +24,38 @@ uint NextRandom(inout uint state)
 
 float RandomValue(inout uint state)
 {
-	return (NextRandom(state) / 4294967295.0); // 2^32 - 1
+	return ((NextRandom(state) / 4294967295.0) * 2.0 - 1.0); // 2^32 - 1
 }
 
-// Random value in normal distribution (with mean=0 and sd=1)
-float RandomValueNormalDistribution(inout uint state)
-{
-	// Thanks to https://stackoverflow.com/a/6178290
-	float theta = 2 * 3.1415926 * RandomValue(state);
-	float rho = sqrt(-2 * log(RandomValue(state)));
-	return (rho * cos(theta));
-}
 
 // Calculate a random direction
 vec3 RandomDirection(inout uint state)
 {
-	// Thanks to https://math.stackexchange.com/a/1585996
-	float x = RandomValueNormalDistribution(state);
-	float y = RandomValueNormalDistribution(state);
-	float z = RandomValueNormalDistribution(state);
-	return (normalize(vec3(x, y, z)));
+	float x = RandomValue(state);
+	float y = RandomValue(state);
+	float z = RandomValue(state);
+	return (vec3(x, y, z));
+}
+
+vec3	point_on_cube(inout uint state)
+{
+	vec3 pos = RandomDirection(state);
+	if (state % 3 == 0)
+	{
+		pos.x = sign(pos.x);
+		// pos.yz = normalize(pos.yz);
+	}
+	else if (state % 3 == 1)
+	{
+		pos.y = sign(pos.y);
+		// pos.xz = normalize(pos.xz);
+	}
+	else if (state % 3 == 2)
+	{
+		pos.z = sign(pos.z);
+		// pos.xy = normalize(pos.xy);
+	}
+	return (pos);
 }
 
 void main()
@@ -54,8 +66,7 @@ void main()
 	{
 		state += 172613;
 	}
-
-	particles[index].pos = RandomDirection(state) * radius + vec3(0.0, 0.0, -50.0);
+	vec3 pos = point_on_cube(state);
+	particles[index].pos = pos * radius + vec3(0.0, 0.0, -25.0);
 	particles[index].dir = vec3(0.0);
-	// particles[index].dir = RandomDirection(state) * 4.0f;
 }

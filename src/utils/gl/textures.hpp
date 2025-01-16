@@ -25,12 +25,14 @@ private:
 	GLint	format;
 public:
 	Tex2d();
+	Tex2d(GLenum wrap, GLenum filter);
 	~Tex2d();
 
 	void	load(const char *img);
 	void	load(const bmp_t &bmp);
 	void	load(const std::string &img);
-
+	void	load_render_texture(GLsizei width, GLsizei height, GLenum format, GLenum type);
+	
 	const GLuint	&get_ID() const; 
 
 	void	bind();

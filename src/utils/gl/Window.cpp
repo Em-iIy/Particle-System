@@ -22,10 +22,10 @@ void	init_glfw(void)
 #endif
 }
 
-GLFWwindow	*init_window(int width, int height, const char *title, GLFWmonitor *monitor, GLFWwindow *share)
+GLFWwindow	*init_window(int *width, int *height, const char *title, GLFWmonitor *monitor, GLFWwindow *share)
 {
 	int x, y;
-	GLFWwindow	*window = glfwCreateWindow(width, height, title, monitor, share);
+	GLFWwindow	*window = glfwCreateWindow(*width, *height, title, monitor, share);
 	if (!window)
 	{
 		std::cerr << "Glfw window error" << std::endl;
@@ -40,8 +40,9 @@ GLFWwindow	*init_window(int width, int height, const char *title, GLFWmonitor *m
 		glfwDestroyWindow(window);
 		exit(EXIT_FAILURE);
 	}
-	glfwGetFramebufferSize(window, &x, &y);
-	glViewport(0, 0, x, y);
+	glfwGetFramebufferSize(window, width, height);
+
+	glViewport(0, 0, *width, *height);
 
 	glfwSwapInterval(0);
 
