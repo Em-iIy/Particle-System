@@ -132,7 +132,7 @@ int main(int argc, char **argv)
 		mlm::vec3 gravity;
 		input::process(window);
 		g_delta_time = delta_time_update();
-		if(fCounter > 500) {
+		if(ftime > 1.0f) {
 				std::cout << "FPS: " << 1 / (ftime / fCounter) << std::endl;
 				fCounter = 0;
 				ftime = 0.0f;
