@@ -8,10 +8,10 @@ Created on: 16/12/2024
 #include <cmath>
 #include <ctime>
 
-#define WIDTH 1920
-#define HEIGHT 1080
-// #define WIDTH 3840
-// #define HEIGHT 2160
+// #define WIDTH 1920
+// #define HEIGHT 1080
+#define WIDTH 3840
+#define HEIGHT 2160
 #define FOV 100.0f
 
 #define PARTICLE_COUNT 1048576
@@ -60,9 +60,9 @@ int main(int argc, char **argv)
 {
 	srand(std::time(NULL));
 	init_glfw();
-	GLFWwindow *window = init_window(&width, &height, "particle-system", NULL, NULL);
-	// GLFWwindow *window = init_window(&width, &height, "particle-system", glfwGetPrimaryMonitor(), NULL);
-
+	// GLFWwindow *window = init_window(&width, &height, "particle-system", NULL, NULL);
+	GLFWwindow *window = init_fullscreen_window("test");
+	// return (1);
 	uint	random = (uint)((float)rand() / 2147483647.0f * 10000.0f);
     // Enable OpenGL debug output
     // glEnable(GL_DEBUG_OUTPUT);
@@ -89,10 +89,10 @@ int main(int argc, char **argv)
 	ComputeShader	init_sphere("resources/shaders/sphere_init.comp");
 	ComputeShader	physics("resources/shaders/physics.comp");
 	Shader			particle_shader("resources/shaders/particle.vert", "resources/shaders/particle.frag");
-	Shader			quad_shader("resources/shaders/quad.vert", "resources/shaders/quad.frag");
-	// Shader			quad_shader("resources/shaders/quad.vert", "resources/shaders/edge_detection.frag");
-	// Shader			quad_shader("resources/shaders/quad.vert", "resources/shaders/chromatic_abberation.frag");
-	// Shader			quad_shader("resources/shaders/quad.vert", "resources/shaders/blur.frag");
+	// Shader			quad_shader("resources/shaders/quad.vert", "resources/shaders/postprocessing/quad.frag");
+	Shader			quad_shader("resources/shaders/quad.vert", "resources/shaders/postprocessing/edge_detection.frag");
+	// Shader			quad_shader("resources/shaders/quad.vert", "resources/shaders/postprocessing/chromatic_abberation.frag");
+	// Shader			quad_shader("resources/shaders/quad.vert", "resources/shaders/postprocessing/blur.frag");
 	init_sphere.use();
 	ssbo.bind();
 	init_sphere.set_float("radius", RADIUS);
@@ -107,7 +107,7 @@ int main(int argc, char **argv)
 	FrameBuffer bla;
 	bla.generate(width, height);
 
-	glPointSize(10);
+	glPointSize(1);
 	while (!glfwWindowShouldClose(window))
 	{
 		// Bind to the frame buffer

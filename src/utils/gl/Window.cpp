@@ -40,11 +40,37 @@ GLFWwindow	*init_window(int *width, int *height, const char *title, GLFWmonitor 
 		glfwDestroyWindow(window);
 		exit(EXIT_FAILURE);
 	}
-	glfwGetFramebufferSize(window, width, height);
+	// glfwGetFramebufferSize(window, width, height);
+	// std::cout << *width << " " << *height << std::endl;
+	// glfwGetWindowSize(window, width, height);
+	// std::cout << *width << " " << *height << std::endl;
 
 	glViewport(0, 0, *width, *height);
 
 	glfwSwapInterval(0);
 
+	return (window);
+}
+
+GLFWwindow	*init_fullscreen_window(const char *title)
+{
+	GLFWmonitor *monitor = glfwGetPrimaryMonitor();
+	const GLFWvidmode *vid_mode = glfwGetVideoMode(monitor);
+	GLFWwindow	*window = glfwCreateWindow(vid_mode->width, vid_mode->height, title, monitor, NULL);
+	if (!window)
+	{
+		std::cerr << "Glfw window error" << std::endl;
+		glfwTerminate();
+		exit(EXIT_FAILURE);
+	}
+	glfwMakeContextCurrent(window);
+	if (!gladLoadGL())
+	{
+		std::cerr << "Glad couldn't load GL" << std::endl;
+		glfwTerminate();
+		glfwDestroyWindow(window);
+		exit(EXIT_FAILURE);
+	}
+	glViewport(0, 0, vid_mode->width, vid_mode->height);
 	return (window);
 }
