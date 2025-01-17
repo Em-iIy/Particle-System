@@ -22,7 +22,7 @@ void	init_glfw(void)
 #endif
 }
 
-GLFWwindow	*init_window(int *width, int *height, const char *title, GLFWmonitor *monitor, GLFWwindow *share)
+GLFWwindow	*init_window(int *width, int *height, const char *title, GLFWmonitor *monitor, GLFWwindow *share, bool vsync)
 {
 	int x, y;
 	GLFWwindow	*window = glfwCreateWindow(*width, *height, title, monitor, share);
@@ -45,14 +45,17 @@ GLFWwindow	*init_window(int *width, int *height, const char *title, GLFWmonitor 
 	// glfwGetWindowSize(window, width, height);
 	// std::cout << *width << " " << *height << std::endl;
 
-	glViewport(0, 0, *width, *height);
+	if (!vsync)
+	{
+		glViewport(0, 0, *width, *height);
+	}
 
 	glfwSwapInterval(0);
 
 	return (window);
 }
 
-GLFWwindow	*init_fullscreen_window(const char *title)
+GLFWwindow	*init_fullscreen_window(const char *title, bool vsync)
 {
 	GLFWmonitor *monitor = glfwGetPrimaryMonitor();
 	const GLFWvidmode *vid_mode = glfwGetVideoMode(monitor);
@@ -71,6 +74,10 @@ GLFWwindow	*init_fullscreen_window(const char *title)
 		glfwDestroyWindow(window);
 		exit(EXIT_FAILURE);
 	}
-	glViewport(0, 0, vid_mode->width, vid_mode->height);
+	if (!vsync)
+	{
+		glViewport(0, 0, vid_mode->width, vid_mode->height);
+	}
+	glfwSwapInterval(0);
 	return (window);
 }

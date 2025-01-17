@@ -23,6 +23,9 @@ Created on: 16/12/2024
 
 #define RADIUS 20.0f
 
+#define POSTPROCESSING true
+#define VSYNC false
+
 float		g_delta_time = 0.0f;
 float		g_pause = 1.0f;
 GLuint		fbo;
@@ -60,8 +63,8 @@ int main(int argc, char **argv)
 {
 	srand(std::time(NULL));
 	init_glfw();
-	// GLFWwindow *window = init_window(&width, &height, "particle-system", NULL, NULL);
-	GLFWwindow *window = init_fullscreen_window("test");
+	// GLFWwindow *window = init_window(&width, &height, "particle-system", NULL, NULL, VSYNC);
+	GLFWwindow *window = init_fullscreen_window("particle-system", VSYNC);
 	// return (1);
 	uint	random = (uint)((float)rand() / 2147483647.0f * 10000.0f);
     // Enable OpenGL debug output
@@ -89,10 +92,17 @@ int main(int argc, char **argv)
 	ComputeShader	init_sphere("resources/shaders/sphere_init.comp");
 	ComputeShader	physics("resources/shaders/physics.comp");
 	Shader			particle_shader("resources/shaders/particle.vert", "resources/shaders/particle.frag");
-	// Shader			quad_shader("resources/shaders/quad.vert", "resources/shaders/postprocessing/quad.frag");
-	Shader			quad_shader("resources/shaders/quad.vert", "resources/shaders/postprocessing/edge_detection.frag");
-	// Shader			quad_shader("resources/shaders/quad.vert", "resources/shaders/postprocessing/chromatic_abberation.frag");
-	// Shader			quad_shader("resources/shaders/quad.vert", "resources/shaders/postprocessing/blur.frag");
+	Shader			quad_shader;
+	FrameBuffer bla;
+	if (POSTPROCESSING)
+	{
+		quad_shader = Shader("resources/shaders/quad.vert", "resources/shaders/postprocessing/quad.frag");
+		// Shader			quad_shader("resources/shaders/quad.vert", "resources/shaders/postprocessing/edge_detection.frag");
+		// Shader			quad_shader("resources/shaders/quad.vert", "resources/shaders/postprocessing/chromatic_abberation.frag");
+		// Shader			quad_shader("resources/shaders/quad.vert", "resources/shaders/postprocessing/blur.frag");
+
+		bla.generate(width, height);
+	}
 	init_sphere.use();
 	ssbo.bind();
 	init_sphere.set_float("radius", RADIUS);
@@ -104,16 +114,16 @@ int main(int argc, char **argv)
 	float	ftime = 0.0f;
 	float	run_time = 0.0f;
 
-	FrameBuffer bla;
-	bla.generate(width, height);
 
 	glPointSize(1);
 	while (!glfwWindowShouldClose(window))
 	{
-		// Bind to the frame buffer
-		bla.bind();
-		glEnable(GL_DEPTH_TEST);
-
+		if (POSTPROCESSING)
+		{
+			// Bind to the frame buffer
+			bla.bind();
+			glEnable(GL_DEPTH_TEST);
+		}
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -166,16 +176,20 @@ int main(int argc, char **argv)
 		// glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glDrawArrays(GL_POINTS, 0, PARTICLE_COUNT);
 
-		bla.unbind();
-		glDisable(GL_DEPTH_TEST);
+		if (POSTPROCESSING)
+		{
+			bla.unbind();
+			glDisable(GL_DEPTH_TEST);
 
-		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
-		quad_shader.use();
+			glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT);
+			quad_shader.use();
 
-		bla.render_texture.bind();
-		quad_vao.bind();
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+			bla.render_texture.bind();
+			quad_vao.bind();
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+		}
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
