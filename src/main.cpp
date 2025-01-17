@@ -44,21 +44,6 @@ mlm::vec3	rand_vec3()
 	return (mlm::vec3(rand() / 2147483648.0f, rand() / 2147483648.0f, rand() / 2147483648.0f));
 }
 
-static void init_render_texture(GLuint &tex)
-{
-	glGenTextures(1, &tex);
-	glBindTexture(GL_TEXTURE_2D, tex);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	
-	glBindTexture(GL_TEXTURE_2D, 0);
-}
-
 GLfloat	vertices[] = {
 	1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
 	-1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
@@ -119,30 +104,14 @@ int main(int argc, char **argv)
 	float	ftime = 0.0f;
 	float	run_time = 0.0f;
 
-	glGenFramebuffers(1, &fbo);
-	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	FrameBuffer bla;
+	bla.generate(width, height);
 
-	init_render_texture(rtex);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, rtex, 0);
-
-	glGenRenderbuffers(1, &rbo);
-	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
-
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-	{
-		std::cerr << "Frame buffer incomplete!" << std::endl;
-		throw std::exception();
-	}
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	glPointSize(1);
+	glPointSize(10);
 	while (!glfwWindowShouldClose(window))
 	{
 		// Bind to the frame buffer
-		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+		bla.bind();
 		glEnable(GL_DEPTH_TEST);
 
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -167,7 +136,6 @@ int main(int argc, char **argv)
 			run_time += g_delta_time * speed;
 			gravity = mlm::vec3(20.0f * sinf(run_time * .2f), 20.0f * cosf(run_time * .2f), -50.0f);
 			gravity += (rand_vec3() * 2 - 1.0f) * 0.5f;
-
 		}
 
 		physics.use();
@@ -198,13 +166,14 @@ int main(int argc, char **argv)
 		// glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glDrawArrays(GL_POINTS, 0, PARTICLE_COUNT);
 
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		bla.unbind();
 		glDisable(GL_DEPTH_TEST);
 
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		quad_shader.use();
-		glBindTexture(GL_TEXTURE_2D, rtex);
+
+		bla.render_texture.bind();
 		quad_vao.bind();
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 

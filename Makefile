@@ -21,6 +21,8 @@ FILES_SRCS =	main.cpp \
 				bmp.cpp \
 				textures.cpp \
 				input.cpp \
+				FrameBuffer.cpp \
+				RenderBuffer.cpp \
 				# Config.cpp \
 
 FILES_OBJS = $(FILES_SRCS:.cpp=.o)
