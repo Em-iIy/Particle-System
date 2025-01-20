@@ -74,10 +74,10 @@ GLFWwindow	*init_fullscreen_window(const char *title, bool vsync)
 		glfwDestroyWindow(window);
 		exit(EXIT_FAILURE);
 	}
+	glViewport(0, 0, vid_mode->width, vid_mode->height);
 	if (!vsync)
 	{
-		glViewport(0, 0, vid_mode->width, vid_mode->height);
+		glfwSwapInterval(0);
 	}
-	glfwSwapInterval(0);
 	return (window);
 }
