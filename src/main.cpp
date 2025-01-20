@@ -19,7 +19,8 @@ Created on: 16/12/2024
 
 #define VIEW_BOX_DIMENSIONS 100.0f
 
-#define SPEED 15.0f
+// #define SPEED 2.f
+#define SPEED 20.f
 
 #define RADIUS 20.0f
 
@@ -143,15 +144,20 @@ int main(int argc, char **argv)
 
 		if (g_pause > 0.1f)
 		{
-			run_time += g_delta_time * speed;
-			gravity = mlm::vec3(20.0f * sinf(run_time * .2f), 20.0f * cosf(run_time * .2f), -50.0f);
-			gravity += (rand_vec3() * 2 - 1.0f) * 0.5f;
+			float frame_time = g_delta_time * speed;
+			// float frame_time = g_delta_time;
+			run_time += frame_time;
+			gravity = mlm::vec3(35.0f * sinf(run_time * 0.1f), 35.0f * cosf(run_time * 0.1f), -50.0f);
+			// gravity = mlm::vec3(0.0f, 0.0f, -50.0f);
+			// gravity += (rand_vec3() * 2 - 1.0f) * 0.5f;
 		}
 
 		physics.use();
 		ssbo.bind();
 		physics.set_vec3("gravity", gravity);
-		physics.set_float("delta_time", g_delta_time * speed);
+		physics.set_float("delta_time", g_delta_time);
+		// physics.set_float("delta_time", g_delta_time * speed);
+		physics.set_float("speed", speed);
 		if (g_pause > 0.1f)
 			glDispatchCompute((GLuint)PARTICLE_COUNT / 16, 1, 1);
 		glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
