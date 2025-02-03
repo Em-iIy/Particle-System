@@ -100,9 +100,9 @@ int main(int argc, char **argv)
 	if (POSTPROCESSING)
 	{
 		quad_shader = Shader("resources/shaders/quad.vert", "resources/shaders/postprocessing/quad.frag");
-		// Shader			quad_shader("resources/shaders/quad.vert", "resources/shaders/postprocessing/edge_detection.frag");
-		// Shader			quad_shader("resources/shaders/quad.vert", "resources/shaders/postprocessing/chromatic_abberation.frag");
-		// Shader			quad_shader("resources/shaders/quad.vert", "resources/shaders/postprocessing/blur.frag");
+		// quad_shader = Shader("resources/shaders/quad.vert", "resources/shaders/postprocessing/edge_detection.frag");
+		// quad_shader = Shader("resources/shaders/quad.vert", "resources/shaders/postprocessing/chromatic_abberation.frag");
+		// quad_shader = Shader("resources/shaders/quad.vert", "resources/shaders/postprocessing/blur.frag");
 
 		bla.generate(width, height);
 	}
@@ -191,7 +191,6 @@ int main(int argc, char **argv)
 		// glDrawArrays(GL_TRIANGLE_STRIP, 0, PARTICLE_COUNT);
 		// glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glDrawArrays(GL_POINTS, 0, PARTICLE_COUNT);
-
 		if (POSTPROCESSING)
 		{
 			bla.unbind();
@@ -207,7 +206,16 @@ int main(int argc, char **argv)
 
 		}
 
-		RenderText(font, "fps: " + fps, 0.0f, height - 40.0f, 1.0f, mlm::vec3(1.0f));
+		{
+			std::string info_to_render = "fps: " + fps;
+			info_to_render += "\ncolor1 = R(" + std::to_string(color1.x * 255.0f) + ") G(" + std::to_string(color1.y * 255.0f) + ") B(" + std::to_string(color1.z * 255.0f) + ")";
+			info_to_render += "\ncolor2 = R(" + std::to_string(color2.x * 255.0f) + ") G(" + std::to_string(color2.y * 255.0f) + ") B(" + std::to_string(color2.z * 255.0f) + ")";
+			RenderText(font, info_to_render, 0.0f, height - 40.0f, 0.5f, mlm::vec3(1.0f));
+		}
+		if (g_pause < 0.1f)
+		{
+			RenderText(font, "PAUSED", 0.0f, height - 400.0f, 5.f, mlm::vec3(1.0f));
+		}
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
