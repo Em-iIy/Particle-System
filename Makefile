@@ -23,6 +23,7 @@ FILES_SRCS =	main.cpp \
 				input.cpp \
 				FrameBuffer.cpp \
 				RenderBuffer.cpp \
+				RenderText.cpp \
 				# Config.cpp \
 
 FILES_OBJS = $(FILES_SRCS:.cpp=.o)
@@ -58,19 +59,23 @@ CFLAGS += -g -fsanitize=address
 
 UNAME = $(shell uname)
 
+FREE_TYPE_FLAGS = -I/usr/include/freetype2 -I/usr/include/libpng16
+
 # Linux flags
 ifeq ($(UNAME), Linux)
-	LFLAGS = -lglfw -ldl
+	LFLAGS = -lglfw -ldl -lfreetype
 endif
 # Apple flags
 ifeq ($(UNAME), Darwin)
-	LFLAGS = -lglfw3 -framework Cocoa -framework OpenGL -framework IOKit
+	LFLAGS = -lglfw3 -framework Cocoa -framework OpenGL -framework -lfreetype IOKit
 endif
 
 INC =	-I$(DIR_INC) \
 		-I$(DIR_SRCS) \
 		-I$(DIR_SRCS)utils/ \
 		-I$(DIR_SRCS)lib/ \
+
+INC += $(FREE_TYPE_FLAGS)
 
 all:
 	$(MAKE) $(NAME) -j4

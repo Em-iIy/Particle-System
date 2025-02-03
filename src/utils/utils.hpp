@@ -16,6 +16,7 @@ Created on: 16/12/2024
 #include "gl/Key.hpp"
 #include "gl/textures.hpp"
 #include "gl/RenderBuffer.hpp"
+#include "gl/RenderText.hpp"
 #include "gl/FrameBuffer.hpp"
 #include "input.hpp"
 

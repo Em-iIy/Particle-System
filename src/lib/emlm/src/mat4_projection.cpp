@@ -32,4 +32,16 @@ mat4	perspective(const float &fov, const float &aspect, const float &near, const
 	));
 }
 
+mat4	ortho(const float &left, const float &right, const float &bottom, const float &top)
+{
+	float	hor_diff = right - left;
+	float	vert_diff = top - bottom;
+	return (mat4(
+		2.0f / hor_diff, 0.0f, 0.0f, 0.0f,
+		0.0f, 2.0f / vert_diff, 0.0f, .0f,
+		0.0f, 0.0f, -1.0f, 0.0f,
+		-(right + left) / hor_diff, -(top + bottom) / vert_diff, 0.0f, 1.0f
+	));
+}
+
 }

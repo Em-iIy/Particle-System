@@ -24,7 +24,7 @@ Created on: 16/12/2024
 
 #define RADIUS 20.0f
 
-#define POSTPROCESSING true
+#define POSTPROCESSING false
 #define VSYNC false
 
 float		g_delta_time = 0.0f;
@@ -71,6 +71,8 @@ int main(int argc, char **argv)
     // Enable OpenGL debug output
     // glEnable(GL_DEBUG_OUTPUT);
     // glDebugMessageCallback(glDebugOutput, nullptr);
+	std::map<GLchar, Character> font = init_font("resources/fonts/DroidSansMono.ttf");
+	init_text_renderer("resources/shaders/font/font.vert", "resources/shaders/font/font.frag");
 
 	color1 = mlm::vec3(1.0f, 0.0f, 0.1f);
 	color2 = mlm::vec3(1.0f, 1.0f, 0.0f);
@@ -115,7 +117,11 @@ int main(int argc, char **argv)
 	float	ftime = 0.0f;
 	float	run_time = 0.0f;
 
+	std::string fps = "";
 
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glPointSize(1);
 	while (!glfwWindowShouldClose(window))
 	{
@@ -134,7 +140,9 @@ int main(int argc, char **argv)
 		input::process(window);
 		g_delta_time = delta_time_update();
 		if(ftime > 1.0f) {
-				std::cout << "FPS: " << 1 / (ftime / fCounter) << std::endl;
+				float f_fps = 1.0f / (ftime / fCounter);
+				fps = std::to_string((int)f_fps);
+				std::cout << "FPS: " << fps << std::endl;
 				fCounter = 0;
 				ftime = 0.0f;
 		} else {
@@ -159,8 +167,10 @@ int main(int argc, char **argv)
 		// physics.set_float("delta_time", g_delta_time * speed);
 		physics.set_float("speed", speed);
 		if (g_pause > 0.1f)
+		{
 			glDispatchCompute((GLuint)PARTICLE_COUNT / 16, 1, 1);
-		glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
+			glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
+		}
 
 
 		mlm::mat4	model(1.0f);
@@ -196,6 +206,8 @@ int main(int argc, char **argv)
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 		}
+
+		RenderText(font, "fps: " + fps, 0.0f, height - 40.0f, 1.0f, mlm::vec3(1.0f));
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
