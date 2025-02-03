@@ -14,7 +14,7 @@ Created on: 16/12/2024
 #define HEIGHT 2160
 #define FOV 100.0f
 
-#define PARTICLE_COUNT 1048576
+#define PARTICLE_COUNT 2048576
 // #define PARTICLE_COUNT 2000
 
 #define VIEW_BOX_DIMENSIONS 100.0f
@@ -207,9 +207,10 @@ int main(int argc, char **argv)
 		}
 
 		{
-			std::string info_to_render = "fps: " + fps;
-			info_to_render += "\ncolor1 = R(" + std::to_string(color1.x * 255.0f) + ") G(" + std::to_string(color1.y * 255.0f) + ") B(" + std::to_string(color1.z * 255.0f) + ")";
-			info_to_render += "\ncolor2 = R(" + std::to_string(color2.x * 255.0f) + ") G(" + std::to_string(color2.y * 255.0f) + ") B(" + std::to_string(color2.z * 255.0f) + ")";
+			std::string info_to_render = "Fps: " + fps;
+			info_to_render += "\nParticles: " + std::to_string(PARTICLE_COUNT);
+			info_to_render += "\nColor1 = R(" + std::to_string(color1.x * 255.0f) + ") G(" + std::to_string(color1.y * 255.0f) + ") B(" + std::to_string(color1.z * 255.0f) + ")";
+			info_to_render += "\nColor2 = R(" + std::to_string(color2.x * 255.0f) + ") G(" + std::to_string(color2.y * 255.0f) + ") B(" + std::to_string(color2.z * 255.0f) + ")";
 			RenderText(font, info_to_render, 0.0f, height - 40.0f, 0.5f, mlm::vec3(1.0f));
 		}
 		if (g_pause < 0.1f)
