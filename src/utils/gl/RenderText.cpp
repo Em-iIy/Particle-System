@@ -38,7 +38,7 @@ std::map<GLchar, Character>	init_font(const char *font_file)
 		exit(EXIT_FAILURE);
 	}
 
-	FT_Set_Pixel_Sizes(face, 0, 48);
+	FT_Set_Pixel_Sizes(face, 256, 256);
 
 	// disable byte-alignment restriction
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -103,7 +103,7 @@ void RenderText(std::map<GLchar, Character> &font, std::string text, float x, fl
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindVertexArray(vao);
-
+	scale = scale / 256.0f * 48.0f;
 	std::string::const_iterator c;
 	for (c = text.begin(); c != text.end(); c++) 
 	{

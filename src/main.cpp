@@ -28,7 +28,7 @@ Created on: 16/12/2024
 #define VSYNC false
 
 float		g_delta_time = 0.0f;
-float		g_pause = 1.0f;
+bool		g_pause = false;
 GLuint		fbo;
 GLuint		rbo;
 GLuint		rtex;
@@ -99,8 +99,8 @@ int main(int argc, char **argv)
 	FrameBuffer bla;
 	if (POSTPROCESSING)
 	{
-		quad_shader = Shader("resources/shaders/quad.vert", "resources/shaders/postprocessing/quad.frag");
-		// quad_shader = Shader("resources/shaders/quad.vert", "resources/shaders/postprocessing/edge_detection.frag");
+		// quad_shader = Shader("resources/shaders/quad.vert", "resources/shaders/postprocessing/quad.frag");
+		quad_shader = Shader("resources/shaders/quad.vert", "resources/shaders/postprocessing/edge_detection.frag");
 		// quad_shader = Shader("resources/shaders/quad.vert", "resources/shaders/postprocessing/chromatic_abberation.frag");
 		// quad_shader = Shader("resources/shaders/quad.vert", "resources/shaders/postprocessing/blur.frag");
 
@@ -150,7 +150,7 @@ int main(int argc, char **argv)
 			ftime += g_delta_time;
 		}	
 
-		if (g_pause > 0.1f)
+		if (g_pause == false)
 		{
 			float frame_time = g_delta_time * speed;
 			// float frame_time = g_delta_time;
@@ -166,7 +166,7 @@ int main(int argc, char **argv)
 		physics.set_float("delta_time", g_delta_time);
 		// physics.set_float("delta_time", g_delta_time * speed);
 		physics.set_float("speed", speed);
-		if (g_pause > 0.1f)
+		if (g_pause == false)
 		{
 			glDispatchCompute((GLuint)PARTICLE_COUNT / 16, 1, 1);
 			glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
@@ -209,11 +209,11 @@ int main(int argc, char **argv)
 		{
 			std::string info_to_render = "Fps: " + fps;
 			info_to_render += "\nParticles: " + std::to_string(PARTICLE_COUNT);
-			info_to_render += "\nColor1 = R(" + std::to_string(color1.x * 255.0f) + ") G(" + std::to_string(color1.y * 255.0f) + ") B(" + std::to_string(color1.z * 255.0f) + ")";
-			info_to_render += "\nColor2 = R(" + std::to_string(color2.x * 255.0f) + ") G(" + std::to_string(color2.y * 255.0f) + ") B(" + std::to_string(color2.z * 255.0f) + ")";
+			info_to_render += "\nColor1 = R(" + std::to_string(int(color1.x * 255.0f)) + ") G(" + std::to_string(int(color1.y * 255.0f)) + ") B(" + std::to_string(int(color1.z * 255.0f)) + ")";
+			info_to_render += "\nColor2 = R(" + std::to_string(int(color2.x * 255.0f)) + ") G(" + std::to_string(int(color2.y * 255.0f)) + ") B(" + std::to_string(int(color2.z * 255.0f)) + ")";
 			RenderText(font, info_to_render, 0.0f, height - 40.0f, 0.5f, mlm::vec3(1.0f));
 		}
-		if (g_pause < 0.1f)
+		if (g_pause == true)
 		{
 			RenderText(font, "PAUSED", 0.0f, height - 400.0f, 5.f, mlm::vec3(1.0f));
 		}

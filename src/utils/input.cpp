@@ -10,7 +10,7 @@ Created on: 18/12/2024
 
 #include "emlm/emlm.hpp"
 
-extern float g_pause;
+extern bool g_pause;
 
 extern mlm::vec3 color1;
 extern mlm::vec3 color2;
@@ -47,10 +47,7 @@ namespace input {
 		}
 		if (space.is_pressed())
 		{
-			if (g_pause > 0.1f)
-				g_pause = 0.0f;
-			else
-				g_pause = 1.0f;
+			g_pause = !g_pause;
 		}
 		if (c.is_pressed())
 		{
