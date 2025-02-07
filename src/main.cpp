@@ -14,15 +14,15 @@ Created on: 16/12/2024
 #define HEIGHT 2160
 #define FOV 100.0f
 
-#define PARTICLE_COUNT 2048576
+#define PARTICLE_COUNT 3048576
 // #define PARTICLE_COUNT 2000
 
-#define VIEW_BOX_DIMENSIONS 100.0f
-
-// #define SPEED 2.f
+#define VIEW_BOX_DIMENSIONS 2000.0f
+#define START_DISTANCE 1000.0f
+// #define SPEED 5.f
 #define SPEED 20.f
 
-#define RADIUS 20.0f
+#define RADIUS 550.0f
 
 #define POSTPROCESSING false
 #define VSYNC false
@@ -76,7 +76,9 @@ int main(int argc, char **argv)
 
 	color1 = mlm::vec3(1.0f, 0.0f, 0.1f);
 	color2 = mlm::vec3(1.0f, 1.0f, 0.0f);
-
+	// color2 = mlm::vec3(0.0f);
+	// color1 = mlm::vec3(0.972482f, 0.50095f, 0.936351f);
+	// color2 = mlm::vec3(0.0609484f, 0.0257441f, 0.166107f);
 	VAO quad_vao(1);
 	quad_vao.bind();
 	VBO quad_vbo(vertices, sizeof(vertices));
@@ -91,9 +93,10 @@ int main(int argc, char **argv)
 	particle_vao.link_attr_ssbo(ssbo, 1, 3, GL_FLOAT, sizeof(GLfloat) * 8, (void *)(sizeof(GLfloat) * 4));
 	particle_vao.unbind();
 
-	// ComputeShader	init_sphere("resources/shaders/cube_init.comp");
-	ComputeShader	init_sphere("resources/shaders/sphere_init.comp");
-	ComputeShader	physics("resources/shaders/physics.comp");
+	ComputeShader	init_sphere("resources/shaders/cube_init.comp");
+	// ComputeShader	init_sphere("resources/shaders/sphere_init.comp");
+	ComputeShader	physics("resources/shaders/euler_physics.comp");
+	// ComputeShader	physics("resources/shaders/physics.comp");
 	Shader			particle_shader("resources/shaders/particle.vert", "resources/shaders/particle.frag");
 	Shader			quad_shader;
 	FrameBuffer bla;
@@ -110,6 +113,7 @@ int main(int argc, char **argv)
 	ssbo.bind();
 	init_sphere.set_float("radius", RADIUS);
 	init_sphere.set_uint("frame", random);
+	init_sphere.set_float("dist", START_DISTANCE);
 	glDispatchCompute((GLuint)PARTICLE_COUNT / 16, 1, 1);
 	glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
 
@@ -136,7 +140,8 @@ int main(int argc, char **argv)
 
 		float	speed = SPEED;
 		float time = glfwGetTime();
-		mlm::vec3 gravity;
+		mlm::vec3 gravity1;
+		mlm::vec3 gravity2;
 		input::process(window);
 		g_delta_time = delta_time_update();
 		if(ftime > 1.0f) {
@@ -155,14 +160,17 @@ int main(int argc, char **argv)
 			float frame_time = g_delta_time * speed;
 			// float frame_time = g_delta_time;
 			run_time += frame_time;
-			gravity = mlm::vec3(35.0f * sinf(run_time * 0.1f), 35.0f * cosf(run_time * 0.1f), -50.0f);
-			// gravity = mlm::vec3(0.0f, 0.0f, -50.0f);
-			// gravity += (rand_vec3() * 2 - 1.0f) * 0.5f;
+			mlm::vec3 point = mlm::vec3(sinf(run_time * 0.1f), cosf(run_time * 0.1f), 0.0f);
+			gravity1 = mlm::vec3(0.0f, 0.0f, -START_DISTANCE) + 500.0f * point;
+			gravity2 = mlm::vec3(0.0f, 0.0f, -START_DISTANCE) - point * 500.0f;
+			// gravity1 += (rand_vec3() * 2 - 1.0f) * 0.5f;
+			// gravity2 += (rand_vec3() * 2 - 1.0f) * 0.5f;
 		}
 
 		physics.use();
 		ssbo.bind();
-		physics.set_vec3("gravity", gravity);
+		physics.set_vec3("gravity1", gravity1);
+		physics.set_vec3("gravity2", gravity2);
 		physics.set_float("delta_time", g_delta_time);
 		// physics.set_float("delta_time", g_delta_time * speed);
 		physics.set_float("speed", speed);
@@ -174,7 +182,7 @@ int main(int argc, char **argv)
 
 
 		mlm::mat4	model(1.0f);
-		model = mlm::translate(model, mlm::vec3(0.0f, 0.0f, -25.0f));
+		model = mlm::translate(model, mlm::vec3(0.0f, 5.0f, -25.0f));
 		particle_shader.use();
 		mlm::mat4	projection = mlm::perspective(mlm::radians(FOV), (float)width / (float)height, 0.1f, 2.0f * VIEW_BOX_DIMENSIONS);
 		mlm::mat4	view(1.0f);
@@ -183,7 +191,8 @@ int main(int argc, char **argv)
 		particle_shader.set_mat4("model", model);
 		particle_shader.set_mat4("view", view);
 		particle_shader.set_mat4("projection", projection);
-		particle_shader.set_vec3("gravity", gravity);
+		particle_shader.set_vec3("gravity1", gravity1);
+		particle_shader.set_vec3("gravity2", gravity2);
 		particle_shader.set_vec3("color1", color1);
 		particle_shader.set_vec3("color2", color2);
 		particle_vao.bind();

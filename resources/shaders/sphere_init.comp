@@ -11,8 +11,10 @@ layout (std430, binding = 0) buffer ParticleBuffer {
 	Particle particles[];
 };
 
-layout (location = 0) uniform float radius;
-layout (location = 1) uniform uint frame;
+
+layout (location = 0) uniform float	radius;
+layout (location = 1) uniform float	dist;
+layout (location = 2) uniform uint	frame;
 
 uint NextRandom(inout uint state)
 {
@@ -55,7 +57,6 @@ void main()
 		state += 172613;
 	}
 
-	particles[index].pos = RandomDirection(state) * radius + vec3(0.0, 0.0, -50.0);
+	particles[index].pos = RandomDirection(state) * radius + vec3(0.0, 0.0, -dist);
 	particles[index].dir = vec3(0.0);
-	// particles[index].dir = RandomDirection(state) * 4.0f;
 }
