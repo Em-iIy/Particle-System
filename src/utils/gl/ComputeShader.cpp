@@ -86,3 +86,8 @@ void ComputeShader::set_vec4(const std::string &name, const mlm::vec4 &value) co
 {
 	glUniform4f(glGetUniformLocation(this->ID, name.c_str()), value.x, value.y, value.z, value.w);
 }
+
+void ComputeShader::set_mat4(const std::string &name, mlm::mat4 &value) const
+{
+	glUniformMatrix4fv(glGetUniformLocation(this->ID, name.c_str()), 1, GL_FALSE, &(value[0][0]));
+}

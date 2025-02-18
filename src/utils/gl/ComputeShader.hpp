@@ -26,4 +26,5 @@ class ComputeShader
 		void set_float(const std::string &name, float value) const;
 		void set_vec3(const std::string &name, const mlm::vec3 &value) const;
 		void set_vec4(const std::string &name, const mlm::vec4 &value) const;
+		void set_mat4(const std::string &name, mlm::mat4 &value) const;
 };
