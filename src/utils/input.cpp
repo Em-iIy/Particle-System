@@ -4,16 +4,18 @@ Created on: 18/12/2024
 */
 
 #include <iostream>
+#include <cmath>
 
 #include "input.hpp"
 #include "gl/Key.hpp"
 
 #include "emlm/emlm.hpp"
 
-extern bool g_pause;
+extern bool			g_pause;
+extern float		mass;
 
-extern mlm::vec3 color1;
-extern mlm::vec3 color2;
+extern mlm::vec3	color1;
+extern mlm::vec3	color2;
 
 mlm::vec3	rand_vec3();
 
@@ -27,6 +29,7 @@ namespace input {
 	void	process(GLFWwindow *window)
 	{
 		static Key esc(window, GLFW_KEY_ESCAPE);
+		static Key tab(window, GLFW_KEY_TAB);
 		static Key space(window, GLFW_KEY_SPACE);
 		static Key c(window, GLFW_KEY_C);
 		static Key c1(window, GLFW_KEY_1);
@@ -34,6 +37,7 @@ namespace input {
 
 
 		esc.update();
+		tab.update();
 		space.update();
 		c.update();
 		c1.update();
@@ -44,6 +48,13 @@ namespace input {
 			glfwSetWindowShouldClose(window, true);
 			std::cout << "Goodbye!" << std::endl;
 			print_colors();
+		}
+		if (tab.is_pressed())
+		{
+			if (mass < 0.1f)
+				mass = 1000.f;
+			else
+				mass = 0.0000001f;
 		}
 		if (space.is_pressed())
 		{

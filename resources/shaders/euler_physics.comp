@@ -11,17 +11,17 @@ layout (std430, binding = 0) buffer ParticleBuffer {
 	Particle particles[];
 };
 
-layout (location = 0) uniform vec3 gravity1;
+layout (location = 0) uniform vec3 gravity;
 layout (location = 1) uniform float delta_time;
 layout (location = 2) uniform float speed;
-layout (location = 3) uniform vec3 gravity2;
+layout (location = 3) uniform float mass;
 
-const float	gravity1_mass = 2000.0f;
-const float	gravity2_mass = 2000.0f;
+// const float	gravity_mass = 1000.0f;
 const float	particle_mass = 1.0f;
 const float particle_inverse_mass = 1.0f / particle_mass;
 
-const float max_a = 300.0f;
+const float max_a = 100.0f;
+const float max_dir = 500.0f;
 
 vec3	calc_force(vec3 g_pos, float g_mass, vec3 p)
 {
@@ -34,16 +34,18 @@ vec3	calc_force(vec3 g_pos, float g_mass, vec3 p)
 void main()
 {
 	uint	index = gl_GlobalInvocationID.x;
-
+	vec3	dir = particles[index].dir;
 	vec3	force = vec3(0.0f);
-	force += calc_force(gravity1, gravity1_mass, particles[index].pos);
-	force += calc_force(gravity2, gravity2_mass, particles[index].pos);
+	// force += calc_force(gravity, gravity_mass, particles[index].pos);
+	force += calc_force(gravity, mass, particles[index].pos);
 
 	float d_time = delta_time * speed;
 
 	vec3	a = force * particle_inverse_mass;
-	a = clamp(a,  -max_a, max_a);
+	a = normalize(a) * min(length(a), max_a);
+	dir += a * delta_time;
+
 
 	particles[index].pos += particles[index].dir * d_time + 0.5f * a * d_time * d_time;
-	particles[index].dir += a * delta_time;
+	particles[index].dir = normalize(dir) * min(length(dir), max_dir);
 }

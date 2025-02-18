@@ -5,8 +5,7 @@ out vec4 FragColor;
 in vec3 pos;
 in vec3 dir;
 
-uniform vec3 gravity1;
-uniform vec3 gravity2;
+uniform vec3 gravity;
 uniform vec3 base;
 uniform vec3 color1;
 uniform vec3 color2;
@@ -39,10 +38,8 @@ vec3 oklab_mix( vec3 colA, vec3 colB, float h )
 
 void main()
 {
-	vec3	gravity1_dir = gravity1 - pos;
-	vec3	gravity2_dir = gravity2 - pos;
-	float	closest = min(length(gravity1_dir), length(gravity2_dir));
-	float	dist = clamp(1.0f - closest / dimensions, 0.0, 1.0);
+	vec3	gravity_dir = gravity - pos;
+	float	dist = clamp(1.0f - length(gravity_dir) / dimensions, 0.0, 1.0);
 	// FragColor = vec4(vec3(pos * 0.5 + 0.5), 1.0);
 	FragColor = vec4(oklab_mix(color1, color2, dist * dist * dist), 1.0);
 	// FragColor = vec4(mix(color1, color2, dist * dist), 1.0);
