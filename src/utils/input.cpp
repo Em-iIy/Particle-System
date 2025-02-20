@@ -7,12 +7,14 @@ Created on: 18/12/2024
 #include <cmath>
 
 #include "input.hpp"
+#include "Config.hpp"
 #include "gl/Key.hpp"
 
 #include "emlm/emlm.hpp"
 
 extern bool			g_pause;
 extern float		mass;
+extern Config		config;
 
 extern mlm::vec3	color1;
 extern mlm::vec3	color2;
@@ -52,7 +54,7 @@ namespace input {
 		if (tab.is_pressed())
 		{
 			if (mass < 0.1f)
-				mass = 1000.f;
+				mass = *(config.gravity_mass);
 			else
 				mass = 0.0000001f;
 		}
@@ -64,17 +66,17 @@ namespace input {
 		{
 			color1 = rand_vec3();
 			color2 = rand_vec3();
-			print_colors(); 
+			// print_colors();
 		}
 		if (c1.is_pressed())
 		{
 			color1 = rand_vec3();
-			print_colors(); 
+			// print_colors();
 		}
 		if (c2.is_pressed())
 		{
 			color2 = rand_vec3();
-			print_colors(); 
+			// print_colors();
 		}
 	}
 };

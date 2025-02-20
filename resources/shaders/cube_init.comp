@@ -12,7 +12,7 @@ layout (std430, binding = 0) buffer ParticleBuffer {
 };
 
 layout (location = 0) uniform float radius;
-layout (location = 1) uniform float dist;
+layout (location = 1) uniform vec3	pos;
 layout (location = 2) uniform uint frame;
 
 uint NextRandom(inout uint state)
@@ -68,6 +68,6 @@ void main()
 		state += 172613;
 	}
 	vec3 pos = point_on_cube(state);
-	particles[index].pos = pos * radius + vec3(0.0, 0.0, -dist);
+	particles[index].pos = pos * radius + pos;
 	particles[index].dir = vec3(0.0);
 }

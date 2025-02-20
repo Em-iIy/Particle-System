@@ -24,7 +24,7 @@ FILES_SRCS =	main.cpp \
 				FrameBuffer.cpp \
 				RenderBuffer.cpp \
 				RenderText.cpp \
-				# Config.cpp \
+				Config.cpp \
 
 FILES_OBJS = $(FILES_SRCS:.cpp=.o)
 
@@ -51,11 +51,11 @@ EMLM = $(DIR_EMLM)libmlm.a
 
 # ----------------------------------------Flags
 CC = c++
-CFLAGS = -std=c++11
+CFLAGS = -std=c++20
 # CFLAGS += -Wall -Wextra -Werror
 CFLAGS += -O3
 # CFLAGS += -g
-CFLAGS += -g -fsanitize=address
+# CFLAGS += -g -fsanitize=address
 
 UNAME = $(shell uname)
 

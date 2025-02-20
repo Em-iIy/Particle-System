@@ -42,5 +42,5 @@ void main()
 	float	dist = clamp(1.0f - length(gravity_dir) / dimensions, 0.0, 1.0);
 	// FragColor = vec4(vec3(pos * 0.5 + 0.5), 1.0);
 	FragColor = vec4(oklab_mix(color1, color2, dist * dist * dist), 1.0);
-	// FragColor = vec4(mix(color1, color2, dist * dist), 1.0);
+	// FragColor = vec4(mix(color1, color2, dist * dist * dist), 1.0);
 }

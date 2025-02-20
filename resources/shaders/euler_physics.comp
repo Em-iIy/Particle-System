@@ -16,7 +16,6 @@ layout (location = 1) uniform float delta_time;
 layout (location = 2) uniform float speed;
 layout (location = 3) uniform float mass;
 
-// const float	gravity_mass = 1000.0f;
 const float	particle_mass = 1.0f;
 const float particle_inverse_mass = 1.0f / particle_mass;
 
@@ -36,7 +35,6 @@ void main()
 	uint	index = gl_GlobalInvocationID.x;
 	vec3	dir = particles[index].dir;
 	vec3	force = vec3(0.0f);
-	// force += calc_force(gravity, gravity_mass, particles[index].pos);
 	force += calc_force(gravity, mass, particles[index].pos);
 
 	float d_time = delta_time * speed;

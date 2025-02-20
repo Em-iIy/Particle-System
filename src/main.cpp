@@ -8,14 +8,14 @@ Created on: 16/12/2024
 #include <cmath>
 #include <ctime>
 
+#include "Config.hpp"
+
 // #define WIDTH 1920
 // #define HEIGHT 1080
 #define WIDTH 3840
 #define HEIGHT 2160
-#define FOV 60.0f
+#define FOV 100.0f
 
-#define PARTICLE_COUNT 3048576
-// #define PARTICLE_COUNT 2000
 
 #define VIEW_BOX_DIMENSIONS 2000.0f
 #define START_DISTANCE 1000.0f
@@ -27,8 +27,9 @@ Created on: 16/12/2024
 #define POSTPROCESSING false
 #define VSYNC false
 
+Config 		config;
 float		g_delta_time = 0.0f;
-
+int			particle_count = 0;
 mlm::vec2	mouse_coords(WIDTH / 2.0f, HEIGHT / 2.0f);
 bool		g_pause = false;
 GLuint		fbo;
@@ -48,15 +49,14 @@ void APIENTRY glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severi
 static void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 {
     mouse_coords = mlm::vec2(xpos, ypos);
-    // mouse_coords = mlm::vec2(xpos, height - ypos) / mlm::vec2(width, height) * 2.0f - 1.0f;
 }
 
 mlm::vec3 mouse_to_gravity()
 {
-	float gravityZ = -0.5f * VIEW_BOX_DIMENSIONS;
+	float gravityZ = -0.5f * *(config.view_box_dimensions);
 
 	// Compute half-width and half-height at this depth
-	float halfHeight = tan(mlm::radians(FOV) / 2.0f) * fabs(gravityZ);
+	float halfHeight = tan(mlm::radians(*(config.fov)) / 2.0f) * fabs(gravityZ);
 	float halfWidth = halfHeight * ((float)width / (float)height); // Aspect ratio scaling
 
 	// Convert mouse coordinates to normalized device coordinates (NDC)
@@ -90,25 +90,45 @@ GLuint indices[] = {
 
 int main(int argc, char **argv)
 {
+
+	if (argc != 3)
+	{
+		std::cerr << "Invalid input!\n";
+		std::cerr << "Usage:\n";
+		std::cerr << "particle-system -c,--config <config file>\n";
+		return (1);
+	}
+	try
+	{
+		config.load(argv[2]);
+	}
+	catch(...)
+	{
+		return (1);
+	}
+	
 	srand(std::time(NULL));
 	init_glfw();
-
+	width = *(config.width);
+	height = *(config.height);
 	// GLFWwindow *window = init_window(&width, &height, "particle-system", NULL, NULL, VSYNC);
-	GLFWwindow *window = init_fullscreen_window("particle-system", VSYNC);
+	GLFWwindow *window = init_fullscreen_window(config.title->c_str(), *(config.vsync));
 	glfwSetCursorPosCallback    (window, cursor_position_callback);
 	// return (1);
 	uint	random = (uint)((float)rand() / 2147483647.0f * 10000.0f);
     // Enable OpenGL debug output
     // glEnable(GL_DEBUG_OUTPUT);
     // glDebugMessageCallback(glDebugOutput, nullptr);
-	std::map<GLchar, Character> font = init_font("resources/fonts/DroidSansMono.ttf");
-	init_text_renderer("resources/shaders/font/font.vert", "resources/shaders/font/font.frag");
+	std::map<GLchar, Character> font = init_font(config.font->c_str());
+	init_text_renderer(config.font_vert->c_str(), config.font_frag->c_str());
 
-	color1 = mlm::vec3(1.0f, 0.0f, 0.1f);
-	color2 = mlm::vec3(1.0f, 1.0f, 0.0f);
-	// color2 = mlm::vec3(0.0f);
-	// color1 = mlm::vec3(0.972482f, 0.50095f, 0.936351f);
-	// color2 = mlm::vec3(0.0609484f, 0.0257441f, 0.166107f);
+	particle_count = *(config.particle_count);
+	color1 = *(config.color1);
+	color2 = *(config.color2);
+	color1 = mlm::vec3(0.972482f, 0.50095f, 0.936351f);
+	color2 = mlm::vec3(0.0609484f, 0.0257441f, 0.166107f);
+	// color1 = mlm::vec3(0.982187f, 0.898206f, 0.838165f);
+	// color2 = mlm::vec3(0.381034f, 0.0774148f, 0.626515f);
 	VAO quad_vao(1);
 	quad_vao.bind();
 	VBO quad_vbo(vertices, sizeof(vertices));
@@ -118,33 +138,27 @@ int main(int argc, char **argv)
 
 	VAO particle_vao(1);
 	particle_vao.bind();
-	SSBO ssbo(NULL, sizeof(mlm::vec4) * 2 * PARTICLE_COUNT, GL_DYNAMIC_DRAW);
+	SSBO ssbo(NULL, sizeof(mlm::vec4) * 2 * particle_count, GL_DYNAMIC_DRAW);
 	particle_vao.link_attr_ssbo(ssbo, 0, 3, GL_FLOAT, sizeof(GLfloat) * 8, (void *)0);
 	particle_vao.link_attr_ssbo(ssbo, 1, 3, GL_FLOAT, sizeof(GLfloat) * 8, (void *)(sizeof(GLfloat) * 4));
 	particle_vao.unbind();
 
-	ComputeShader	particle_init_shader("resources/shaders/cube_init.comp");
-	// ComputeShader	particle_init_shader("resources/shaders/sphere_init.comp");
-	ComputeShader	physics("resources/shaders/euler_physics.comp");
-	// ComputeShader	physics("resources/shaders/physics.comp");
-	Shader			particle_shader("resources/shaders/particle.vert", "resources/shaders/particle.frag");
+	ComputeShader	particle_init_shader(config.particle_init_comp->c_str());
+	ComputeShader	physics(config.particle_physics_comp->c_str());
+	Shader			particle_shader(config.particle_vert->c_str(), config.particle_frag->c_str());
 	Shader			quad_shader;
-	FrameBuffer bla;
-	if (POSTPROCESSING)
+	FrameBuffer 	post_proc_frame_buffer;
+	if (*(config.post_processing))
 	{
-		// quad_shader = Shader("resources/shaders/quad.vert", "resources/shaders/postprocessing/quad.frag");
-		quad_shader = Shader("resources/shaders/quad.vert", "resources/shaders/postprocessing/edge_detection.frag");
-		// quad_shader = Shader("resources/shaders/quad.vert", "resources/shaders/postprocessing/chromatic_abberation.frag");
-		// quad_shader = Shader("resources/shaders/quad.vert", "resources/shaders/postprocessing/blur.frag");
-
-		bla.generate(width, height);
+		quad_shader = Shader(config.post_processing_vert->c_str(), config.post_processing_frag->c_str());
+		post_proc_frame_buffer.generate(width, height);
 	}
 	particle_init_shader.use();
 	ssbo.bind();
-	particle_init_shader.set_float("radius", RADIUS);
+	particle_init_shader.set_float("radius", *(config.particle_init_radius));
 	particle_init_shader.set_uint("frame", random);
-	particle_init_shader.set_float("dist", START_DISTANCE);
-	glDispatchCompute((GLuint)PARTICLE_COUNT / 16, 1, 1);
+	particle_init_shader.set_vec3("pos", *(config.particle_init_pos));
+	glDispatchCompute((GLuint)particle_count / 16, 1, 1);
 	glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
 	int		fCounter = 0;
 	float	ftime = 0.0f;
@@ -155,14 +169,13 @@ int main(int argc, char **argv)
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glPointSize(1);
+	glPointSize(*(config.particle_size));
 	while (!glfwWindowShouldClose(window))
 	{
-		mlm::mat4	projection = mlm::perspective(mlm::radians(FOV), (float)width / (float)height, 0.1f, 2.0f * VIEW_BOX_DIMENSIONS);
-		if (POSTPROCESSING)
+		if (*(config.post_processing))
 		{
 			// Bind to the frame buffer
-			bla.bind();
+			post_proc_frame_buffer.bind();
 			glEnable(GL_DEPTH_TEST);
 		}
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -193,11 +206,6 @@ int main(int argc, char **argv)
 			float frame_time = g_delta_time * speed;
 			run_time += frame_time;
 			// mlm::vec3 point = mlm::vec3(sinf(run_time * 0.1f), cosf(run_time * 0.1f), 0.0f);
-			float	half_height = tan(mlm::radians(FOV) / 2.0f) * fabs(-START_DISTANCE);
-			float	half_width = half_height * ((float)width / (float)height);
-			mlm::vec2 point = mlm::vec2(mouse_coords) * mlm::vec2(half_height, half_width);
-			// gravity = mlm::vec3(point.x, point.y, point.z);
-			gravity = mlm::vec3(point, -START_DISTANCE);
 			gravity = mouse_to_gravity();
 			// gravity = mlm::vec3(0.0f, 0.0f, -START_DISTANCE) + 500.0f * point;
 		}
@@ -210,17 +218,18 @@ int main(int argc, char **argv)
 		physics.set_float("mass", mass);
 		if (g_pause == false)
 		{
-			glDispatchCompute((GLuint)PARTICLE_COUNT / 16, 1, 1);
+			glDispatchCompute((GLuint)particle_count / 16, 1, 1);
 			glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
 		}
 
 
+		mlm::mat4	projection = mlm::perspective(mlm::radians(*(config.fov)), (float)width / (float)height, 0.1f, 2.0f * *(config.view_box_dimensions));
 		mlm::mat4	model(1.0f);
 		model = mlm::translate(model, mlm::vec3(0.0f, 5.0f, -25.0f));
 		particle_shader.use();
 		mlm::mat4	view(1.0f);
 		particle_shader.set_float("time", std::abs(sinf(time)));
-		particle_shader.set_float("dimensions", VIEW_BOX_DIMENSIONS);
+		particle_shader.set_float("dimensions", *(config.view_box_dimensions));
 		particle_shader.set_mat4("model", model);
 		particle_shader.set_mat4("view", view);
 		particle_shader.set_mat4("projection", projection);
@@ -228,17 +237,17 @@ int main(int argc, char **argv)
 		particle_shader.set_vec3("color1", color1);
 		particle_shader.set_vec3("color2", color2);
 		particle_vao.bind();
-		glDrawArrays(GL_POINTS, 0, PARTICLE_COUNT);
-		if (POSTPROCESSING)
+		glDrawArrays(GL_POINTS, 0, particle_count);
+		if (*(config.post_processing))
 		{
-			bla.unbind();
+			post_proc_frame_buffer.unbind();
 			glDisable(GL_DEPTH_TEST);
 
 			glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 			quad_shader.use();
 
-			bla.render_texture.bind();
+			post_proc_frame_buffer.render_texture.bind();
 			quad_vao.bind();
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
@@ -246,7 +255,7 @@ int main(int argc, char **argv)
 
 		{
 			std::string info_to_render = "Fps: " + fps;
-			info_to_render += "\nParticles: " + std::to_string(PARTICLE_COUNT);
+			info_to_render += "\nParticles: " + std::to_string(particle_count);
 			info_to_render += "\nMass: " + std::to_string(mass);
 			info_to_render += "\ngravity = x(" + std::to_string(float(gravity.x)) + ") y(" + std::to_string(float(gravity.y)) + ") z(" + std::to_string(float(gravity.z)) + ")";
 			info_to_render += "\nColor1 = R(" + std::to_string(int(color1.x * 255.0f)) + ") G(" + std::to_string(int(color1.y * 255.0f)) + ") B(" + std::to_string(int(color1.z * 255.0f)) + ")";
