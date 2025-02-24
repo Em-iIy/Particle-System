@@ -67,7 +67,7 @@ void main()
 	{
 		state += 172613;
 	}
-	vec3 pos = point_on_cube(state);
-	particles[index].pos = pos * radius + pos;
+	vec3 point = point_on_cube(state);
+	particles[index].pos = point * radius + pos;
 	particles[index].dir = vec3(0.0);
 }
