@@ -11,12 +11,13 @@ Created on: 19/02/2025
 
 #include "emlm/emlm.hpp"
 
-
+#define WORKGROUP_SIZE 16
 
 class Config {
 	private:
 		void	parse_line(const std::string &line);
 		void	parse(const char *data);
+		void	verify();
 
 	public:
 		// Window/screen settings
@@ -24,8 +25,8 @@ class Config {
 		std::optional<float>		fov;
 		std::optional<bool>			fullscreen;
 		std::optional<int>			width;
-		std::optional<float>		view_box_dimensions;
 		std::optional<int>			height;
+		std::optional<float>		view_box_dimensions;
 		std::optional<bool>			vsync;
 		std::optional<bool>			post_processing;
 

@@ -25,6 +25,8 @@ static void	print_colors()
 {
 	std::cout << "color1 = mlm::vec3(" << color1.x << "f, " << color1.y << "f, " << color1.z << "f);" << std::endl;
 	std::cout << "color2 = mlm::vec3(" << color2.x << "f, " << color2.y << "f, " << color2.z << "f);" << std::endl;
+	std::cout << "color1 " << color1.x << " " << color1.y << " " << color1.z << std::endl;
+	std::cout << "color2 " << color2.x << " " << color2.y << " " << color2.z << std::endl;
 }
 
 namespace input {

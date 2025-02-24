@@ -99,7 +99,7 @@ static e_conf_tok	check_token(std::string &data)
 		return (COMPUTE_SHADER_INIT);
 	if (data == "particle_physics_comp")	
 		return (COMPUTE_SHADER_PHYSICS);
-	if (data == "#")
+	if (data == "#" || data == "")
 		return (COMMENT);
 	return (ERROR);
 }
@@ -109,7 +109,7 @@ void	parse_1f(std::vector<std::string> &params, std::optional<float> &dst)
 	if (params.size() != 2)
 		throw std::runtime_error(params[0] + " invalid parameters");
 	if (dst.has_value())
-		std::runtime_error(params[0] + " already set");
+		throw std::runtime_error(params[0] + " already set");
 	try
 	{
 		dst = std::stof(params[1]);
@@ -126,7 +126,7 @@ void	parse_1i(std::vector<std::string> &params, std::optional<int> &dst)
 	if (params.size() != 2)
 		throw std::runtime_error(params[0] + " invalid parameters");
 	if (dst.has_value())
-		std::runtime_error(params[0] + " already set");
+		throw std::runtime_error(params[0] + " already set");
 	try
 	{
 		dst = std::stoi(params[1]);
@@ -142,7 +142,7 @@ void	parse_1bool(std::vector<std::string> &params, std::optional<bool> &dst)
 	if (params.size() != 2)
 		throw std::runtime_error(params[0] + " invalid parameters");
 	if (dst.has_value())
-		std::runtime_error(params[0] + " already set");
+		throw std::runtime_error(params[0] + " already set");
 	if (params[1] == "true")
 		dst = true;
 	else if (params[1] == "false")
@@ -156,7 +156,7 @@ void	parse_vec3(std::vector<std::string> &params, std::optional<mlm::vec3> &dst)
 	if (params.size() != 4)
 		throw std::runtime_error(params[0] + " invalid parameters");
 	if (dst.has_value())
-		std::runtime_error(params[0] + " already set");
+		throw std::runtime_error(params[0] + " already set");
 	try
 	{
 		dst = mlm::vec3(
@@ -176,7 +176,7 @@ void	parse_filename(std::vector<std::string> &params, std::optional<std::filesys
 	if (params.size() != 2)
 		throw std::runtime_error(params[0] + " invalid parameters");
 	if (dst.has_value())
-		std::runtime_error(params[0] + " already set");
+		throw std::runtime_error(params[0] + " already set");
 	std::filesystem::path path = params[1];
 	if (!exists(path))
 		throw std::runtime_error(params[0] + ": " + params[1] + " does not exist");
@@ -200,7 +200,7 @@ void	Config::parse_line(const std::string &line)
 	switch (check_token(params[0]))
 	{
 	case ERROR:
-		std::runtime_error(params[0] + " invalid identifier");
+		throw std::runtime_error(params[0] + " invalid identifier");
 		break;
 	case COMMENT:
 		break;
@@ -208,7 +208,7 @@ void	Config::parse_line(const std::string &line)
 		if (params.size() != 2)
 			throw std::runtime_error("title: invalid parameters");
 		if (this->title.has_value())
-			std::runtime_error("title already set");
+			throw std::runtime_error("title already set");
 		this->title = params[1];
 		break;
 	case FOV:
@@ -301,6 +301,94 @@ void	Config::parse(const char *data)
 	}
 }
 
+void	Config::verify()
+{
+	const std::string msg = ": invalid value";
+
+	if (!this->title.has_value())
+		throw std::runtime_error("title" + msg);
+	if (!this->fov.has_value() || (this->fov < 1.0f || this->fov > 179.0f))
+		throw std::runtime_error("fov" + msg);
+	if (!this->fullscreen.has_value())
+		throw std::runtime_error("fullscreen" + msg);
+	if (!this->width.has_value() || this->width <= 0)
+		throw std::runtime_error("width" + msg);
+	if (!this->height.has_value() || this->height <= 0)
+		throw std::runtime_error("height" + msg);
+	if (!this->view_box_dimensions.has_value() || this->view_box_dimensions <= 0)
+		throw std::runtime_error("view_box_dimensions" + msg);
+	if (!this->vsync.has_value())
+		throw std::runtime_error("vsync" + msg);
+	if (!this->post_processing.has_value())
+		throw std::runtime_error("post_processing" + msg);
+
+	if (!this->color1.has_value() ||
+		(this->color1->x < 0.0f || this->color1->x > 1.0f) ||
+		(this->color1->y < 0.0f || this->color1->y > 1.0f) ||
+		(this->color1->z < 0.0f || this->color1->z > 1.0f))
+		throw std::runtime_error("color1" + msg);
+	if (!this->color2.has_value() ||
+		(this->color2->x < 0.0f || this->color2->x > 1.0f) ||
+		(this->color2->y < 0.0f || this->color2->y > 1.0f) ||
+		(this->color2->z < 0.0f || this->color2->z > 1.0f))
+		throw std::runtime_error("color2" + msg);
+
+	if (!this->particle_count.has_value() || this->particle_count <= 0)
+	{
+		throw std::runtime_error("particle_count" + msg);
+	}
+	else
+	{
+		// Due to workgroup sizes, the particle count must be a multiple of the workgroup size
+		const int	round_min_1 = WORKGROUP_SIZE - 1;
+		this->particle_count = (*(this->particle_count) + round_min_1) & ~round_min_1;
+	}
+	if (!this->particle_mass.has_value())
+		throw std::runtime_error("particle_mass" + msg);
+	if (!this->particle_size.has_value())
+		throw std::runtime_error("particle_size" + msg);
+	if (!this->particle_init_pos.has_value())
+		throw std::runtime_error("particle_init_pos" + msg);
+	if (!this->particle_init_radius.has_value())
+		throw std::runtime_error("particle_init_radius" + msg);
+
+	if (!this->gravity_mass.has_value())
+		throw std::runtime_error("gravity_mass" + msg);
+	if (!this->gravity_static.has_value())
+		throw std::runtime_error("gravity_static" + msg);
+	
+	if (!this->font.has_value())
+		throw std::runtime_error("font" + msg);
+
+	if (!this->particle_vert.has_value())
+		throw std::runtime_error("particle_vert" + msg);
+	if (!this->particle_frag.has_value())
+		throw std::runtime_error("particle_frag" + msg);
+
+	if (!this->font_vert.has_value())
+		throw std::runtime_error("font_vert" + msg);
+	if (!this->font_frag.has_value())
+		throw std::runtime_error("font_frag" + msg);
+	
+	if (*(this->post_processing))
+	{
+		if (!this->post_processing_vert.has_value())
+			throw std::runtime_error("post_processing_vert" + msg);
+		if (!this->post_processing_frag.has_value())
+			throw std::runtime_error("post_processing_frag" + msg);
+	}
+
+	if (!this->particle_init_comp.has_value())
+		throw std::runtime_error("particle_init_comp" + msg);
+	if (!this->particle_physics_comp.has_value())
+		throw std::runtime_error("particle_physics_comp" + msg);
+
+	
+	
+	
+
+}
+
 void	Config::load(std::filesystem::path path)
 {
 	if (std::filesystem::exists(path) == false)
@@ -314,6 +402,7 @@ void	Config::load(std::filesystem::path path)
 	try
 	{
 		this->parse(data);
+		this->verify();
 	}
 	catch(const std::runtime_error& e)
 	{

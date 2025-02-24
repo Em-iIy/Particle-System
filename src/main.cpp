@@ -125,10 +125,6 @@ int main(int argc, char **argv)
 	particle_count = *(config.particle_count);
 	color1 = *(config.color1);
 	color2 = *(config.color2);
-	color1 = mlm::vec3(0.972482f, 0.50095f, 0.936351f);
-	color2 = mlm::vec3(0.0609484f, 0.0257441f, 0.166107f);
-	// color1 = mlm::vec3(0.982187f, 0.898206f, 0.838165f);
-	// color2 = mlm::vec3(0.381034f, 0.0774148f, 0.626515f);
 	VAO quad_vao(1);
 	quad_vao.bind();
 	VBO quad_vbo(vertices, sizeof(vertices));
@@ -158,7 +154,7 @@ int main(int argc, char **argv)
 	particle_init_shader.set_float("radius", *(config.particle_init_radius));
 	particle_init_shader.set_uint("frame", random);
 	particle_init_shader.set_vec3("pos", *(config.particle_init_pos));
-	glDispatchCompute((GLuint)particle_count / 16, 1, 1);
+	glDispatchCompute((GLuint)particle_count / WORKGROUP_SIZE, 1, 1);
 	glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
 	int		fCounter = 0;
 	float	ftime = 0.0f;
@@ -218,7 +214,7 @@ int main(int argc, char **argv)
 		physics.set_float("mass", mass);
 		if (g_pause == false)
 		{
-			glDispatchCompute((GLuint)particle_count / 16, 1, 1);
+			glDispatchCompute((GLuint)particle_count / WORKGROUP_SIZE, 1, 1);
 			glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
 		}
 
