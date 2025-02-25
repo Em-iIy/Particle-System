@@ -15,9 +15,9 @@ layout (location = 0) uniform vec3 gravity;
 layout (location = 1) uniform float delta_time;
 layout (location = 2) uniform float speed;
 layout (location = 3) uniform float mass;
+layout (location = 4) uniform float particle_mass;
 
-const float	particle_mass = 1.0f;
-const float particle_inverse_mass = 1.0f / particle_mass;
+float particle_inverse_mass = 1.0f / particle_mass;
 
 const float max_a = 100.0f;
 const float max_dir = 500.0f;

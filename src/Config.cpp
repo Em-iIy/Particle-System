@@ -382,11 +382,6 @@ void	Config::verify()
 		throw std::runtime_error("particle_init_comp" + msg);
 	if (!this->particle_physics_comp.has_value())
 		throw std::runtime_error("particle_physics_comp" + msg);
-
-	
-	
-	
-
 }
 
 void	Config::load(std::filesystem::path path)

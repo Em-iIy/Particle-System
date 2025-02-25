@@ -20,6 +20,13 @@ Created on: 16/12/2024
 #include "gl/FrameBuffer.hpp"
 #include "input.hpp"
 
+namespace timer {
+	void	start();
+	double	u_elapsed();
+	double	ms_elapsed();
+	double	s_elapsed();
+}
+
 char 						*read_file(const char *file_name);
 
 std::vector<std::string>	split(const std::string &str, const std::string &d);

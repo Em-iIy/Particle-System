@@ -168,12 +168,14 @@ int main(int argc, char **argv)
 	glPointSize(*(config.particle_size));
 	while (!glfwWindowShouldClose(window))
 	{
+		timer::start();
 		if (*(config.post_processing))
 		{
 			// Bind to the frame buffer
 			post_proc_frame_buffer.bind();
 			glEnable(GL_DEPTH_TEST);
 		}
+		float render_timer = timer::u_elapsed();
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -206,19 +208,23 @@ int main(int argc, char **argv)
 			// gravity = mlm::vec3(0.0f, 0.0f, -START_DISTANCE) + 500.0f * point;
 		}
 
-		physics.use();
-		ssbo.bind();
-		physics.set_vec3("gravity", gravity);
-		physics.set_float("delta_time", g_delta_time);
-		physics.set_float("speed", speed);
-		physics.set_float("mass", mass);
+		timer::start();
 		if (g_pause == false)
 		{
+			physics.use();
+			ssbo.bind();
+			physics.set_vec3("gravity", gravity);
+			physics.set_float("delta_time", g_delta_time);
+			physics.set_float("speed", speed);
+			physics.set_float("mass", mass);
+			physics.set_float("particle_mass", *(config.particle_mass));
 			glDispatchCompute((GLuint)particle_count / WORKGROUP_SIZE, 1, 1);
 			glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
 		}
+		float compute_timer = timer::u_elapsed();
 
 
+		timer::start();
 		mlm::mat4	projection = mlm::perspective(mlm::radians(*(config.fov)), (float)width / (float)height, 0.1f, 2.0f * *(config.view_box_dimensions));
 		mlm::mat4	model(1.0f);
 		model = mlm::translate(model, mlm::vec3(0.0f, 5.0f, -25.0f));
@@ -234,6 +240,9 @@ int main(int argc, char **argv)
 		particle_shader.set_vec3("color2", color2);
 		particle_vao.bind();
 		glDrawArrays(GL_POINTS, 0, particle_count);
+		render_timer += timer::u_elapsed();
+
+		timer::start();
 		if (*(config.post_processing))
 		{
 			post_proc_frame_buffer.unbind();
@@ -246,11 +255,14 @@ int main(int argc, char **argv)
 			post_proc_frame_buffer.render_texture.bind();
 			quad_vao.bind();
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
 		}
+		float post_processing_timer = timer::u_elapsed();
 
 		{
 			std::string info_to_render = "Fps: " + fps;
+			info_to_render += "\nCompute: " + std::to_string(compute_timer) + "us";
+			info_to_render += "\nRender: " + std::to_string(render_timer) + "us";
+			info_to_render += "\nPost processing: " + std::to_string(post_processing_timer) + "us";
 			info_to_render += "\nParticles: " + std::to_string(particle_count);
 			info_to_render += "\nMass: " + std::to_string(mass);
 			info_to_render += "\ngravity = x(" + std::to_string(float(gravity.x)) + ") y(" + std::to_string(float(gravity.y)) + ") z(" + std::to_string(float(gravity.z)) + ")";

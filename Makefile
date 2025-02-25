@@ -25,6 +25,7 @@ FILES_SRCS =	main.cpp \
 				RenderBuffer.cpp \
 				RenderText.cpp \
 				Config.cpp \
+				timer.cpp \
 
 FILES_OBJS = $(FILES_SRCS:.cpp=.o)
 
