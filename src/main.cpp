@@ -37,7 +37,7 @@ GLuint		rbo;
 GLuint		rtex;
 int			width = WIDTH;
 int			height = HEIGHT;
-float		mass = 0.0000001f;
+float		mass = 0.0f;
 mlm::vec3	color1;
 mlm::vec3	color2;
 
@@ -114,7 +114,6 @@ int main(int argc, char **argv)
 	// GLFWwindow *window = init_window(&width, &height, "particle-system", NULL, NULL, VSYNC);
 	GLFWwindow *window = init_fullscreen_window(config.title->c_str(), *(config.vsync));
 	glfwSetCursorPosCallback    (window, cursor_position_callback);
-	// return (1);
 	uint	random = (uint)((float)rand() / 2147483647.0f * 10000.0f);
     // Enable OpenGL debug output
     // glEnable(GL_DEBUG_OUTPUT);

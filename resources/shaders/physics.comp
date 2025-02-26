@@ -21,9 +21,10 @@ void main()
 {
 	uint	index = gl_GlobalInvocationID.x;
 	vec3	gravity_dir = gravity - particles[index].pos;
-	gravity_dir = normalize(gravity_dir);
-	particles[index].dir += gravity_dir * delta_time * (mass / particle_mass) * 0.1f;
-	// particles[index].dir += gravity_dir;
+	if (length(gravity_dir) > 0.0f)
+	{
+		gravity_dir = normalize(gravity_dir);
+	}
+	particles[index].dir += gravity_dir * delta_time * mass;
 	particles[index].pos += particles[index].dir * delta_time * speed;
-	// particles[index].pos += particles[index].dir;
 }

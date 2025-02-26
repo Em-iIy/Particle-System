@@ -58,7 +58,7 @@ namespace input {
 			if (mass < 0.1f)
 				mass = *(config.gravity_mass);
 			else
-				mass = 0.0000001f;
+				mass = 0.0f;
 		}
 		if (space.is_pressed())
 		{
