@@ -40,8 +40,9 @@ int main(int argc, char **argv)
 			app.render();
 		}
 	}
-	catch(...)
+	catch(const std::runtime_error &e)
 	{
+		std::cerr << e.what() << std::endl;
 		return (1);
 	}
 	return (0);

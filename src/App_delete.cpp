@@ -1,3 +1,7 @@
+/*
+Created by: Emily (Em_iIy) Winnink
+Created on: 4/3/2025
+*/
 #include "App.hpp"
 
 void	App::delete_text()
@@ -39,12 +43,16 @@ void	App::delete_buffers()
 
 void	App::delete_gl()
 {
-	std::cout << "Deleting window..." << std::endl;
 	if (this->initialized.window == true)
+	{
+		std::cout << "Deleting window..." << std::endl;
 		glfwDestroyWindow(this->window);
-	std::cout << "Deleting GLFW & OpenGL..." << std::endl;
+	}
 	if (this->initialized.gl)
+	{
+		std::cout << "Deleting GLFW & OpenGL..." << std::endl;
 		glfwTerminate();
+	}
 }
 
 App::~App()
