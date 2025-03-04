@@ -24,6 +24,7 @@ void	init_glfw(void)
 
 GLFWwindow	*init_window(int *width, int *height, const char *title, GLFWmonitor *monitor, GLFWwindow *share, bool vsync)
 {
+	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 	GLFWwindow	*window = glfwCreateWindow(*width, *height, title, monitor, share);
 	if (!window)
 	{
@@ -51,6 +52,7 @@ GLFWwindow	*init_window(int *width, int *height, const char *title, GLFWmonitor 
 
 GLFWwindow	*init_fullscreen_window(const char *title, bool vsync)
 {
+	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 	GLFWmonitor *monitor = glfwGetPrimaryMonitor();
 	const GLFWvidmode *vid_mode = glfwGetVideoMode(monitor);
 	GLFWwindow	*window = glfwCreateWindow(vid_mode->width, vid_mode->height, title, monitor, NULL);
