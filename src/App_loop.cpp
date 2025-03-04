@@ -68,7 +68,7 @@ void	App::post_processing()
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
 
-void	App::render_text()
+void	App::render_info()
 {
 	std::string info = "";
 	if (this->state.pause)
@@ -82,7 +82,7 @@ void	App::render_text()
 	info += "\nGravity: "; this->state.grav ? info += "on": info += "off";
 	info += "\nColor1 = R(" + std::to_string(int(this->state.color1.x * 255.0f)) + ") G(" + std::to_string(int(this->state.color1.y * 255.0f)) + ") B(" + std::to_string(int(this->state.color1.z * 255.0f)) + ")";
 	info += "\nColor2 = R(" + std::to_string(int(this->state.color2.x * 255.0f)) + ") G(" + std::to_string(int(this->state.color2.y * 255.0f)) + ") B(" + std::to_string(int(this->state.color2.z * 255.0f)) + ")";
-	RenderText(this->font, info, 0.0f, this->settings.height - 40.0f, 0.5f, mlm::vec3(1.0));
+	render_text(this->font, info, 0.0f, this->settings.height - 40.0f, 0.5f, mlm::vec3(1.0));
 }
 
 void	App::render()
@@ -117,7 +117,7 @@ void	App::render()
 		this->post_processing();
 	this->metrics.post_processing_timer = timer::u_elapsed();
 	if (this->state.debug)
-		this->render_text();
+		this->render_info();
 	glfwSwapBuffers(window);
 	glfwPollEvents();
 }

@@ -1,5 +1,4 @@
-- Change gravity calculation
-- Add more gravity points
-- Move gravity point with mouse
-- Place gravity point with mouse
-- camera
+- Add comments to code
+- normalize code format
+? Improve keybinds
+? print keybinds

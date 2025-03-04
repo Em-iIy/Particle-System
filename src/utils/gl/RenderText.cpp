@@ -98,7 +98,7 @@ void	init_text_renderer(const char *vertex_shader, const char *fragment_shader, 
 	glBindVertexArray(0);
 }
 
-void RenderText(Font &font, std::string text, float x, float y, float scale, mlm::vec3 color)
+void render_text(Font &font, std::string text, float x, float y, float scale, mlm::vec3 color)
 {
 	float x_copy = x;
 	shader.use();
@@ -113,20 +113,20 @@ void RenderText(Font &font, std::string text, float x, float y, float scale, mlm
 		Character ch = font[*c];
 		if (*c == '\n')
 		{
-			y -= ch.Size.y * 1.3 * scale;
+			y -= ch.size.y * 1.3 * scale;
 			x = x_copy;
 		}
 		else if (std::isspace(*c))
 		{
-			x += (ch.Advance >> 6) * scale;
+			x += (ch.advance >> 6) * scale;
 		}
 		else
 		{
-			float xpos = x + ch.Bearing.x * scale;
-			float ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
+			float xpos = x + ch.bearing.x * scale;
+			float ypos = y - (ch.size.y - ch.bearing.y) * scale;
 
-			float w = ch.Size.x * scale;
-			float h = ch.Size.y * scale;
+			float w = ch.size.x * scale;
+			float h = ch.size.y * scale;
 			// update VBO for each character
 			float vertices[6][4] = {
 				{ xpos,	 ypos + h,   0.0f, 0.0f },			
@@ -138,7 +138,7 @@ void RenderText(Font &font, std::string text, float x, float y, float scale, mlm
 				{ xpos + w, ypos + h,   1.0f, 0.0f }		   
 			};
 			// render glyph texture over quad
-			glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+			glBindTexture(GL_TEXTURE_2D, ch.tex_id);
 			// update content of VBO memory
 			glBindBuffer(GL_ARRAY_BUFFER, vbo);
 			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices); // be sure to use glBufferSubData and not glBufferData
@@ -147,7 +147,7 @@ void RenderText(Font &font, std::string text, float x, float y, float scale, mlm
 			// render quad
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 			// now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-			x += (ch.Advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
+			x += (ch.advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
 
 		}
 	}

@@ -114,7 +114,7 @@ class App
 		void				process_input();
 
 		void				post_processing();
-		void				render_text();
+		void				render_info();
 
 		void				delete_text();
 		void				delete_shaders();
