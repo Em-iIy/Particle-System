@@ -72,6 +72,10 @@ void	App::process_input()
 	}
 	if (tab.is_pressed())
 	{
+		if (this->settings.gravity_static == true && this->state.grav == false)
+		{
+			this->state.gravity = this->mouse_to_screen();
+		}
 		this->state.grav = !this->state.grav;
 	}
 	if (space.is_pressed())

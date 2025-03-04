@@ -87,8 +87,6 @@ class App
 		Initialized			initialized;
 		Metrics				metrics;
 
-
-
 		VAO					post_proc_vao;
 		VBO					post_proc_vbo;
 
@@ -110,6 +108,7 @@ class App
 		void				init_buffers();
 		void				init_particles();
 
+		void				update_gravity();
 		void				update_fps();
 		mlm::vec3			mouse_to_screen();
 		void				process_input();

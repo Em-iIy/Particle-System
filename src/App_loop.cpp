@@ -19,12 +19,20 @@ void	App::update_fps()
 	this->metrics.frame_time += g_delta_time;
 }
 
+void	App::update_gravity()
+{
+	if (this->settings.gravity_static == false)
+	{
+		this->state.gravity = this->mouse_to_screen();
+	}
+}
+
 void	App::update()
 {
 	float		mass = 0.0f;
 
-	this->state.gravity = this->mouse_to_screen();
 	g_delta_time = delta_time_update();
+	this->update_gravity();
 	this->update_fps();
 	this->process_input();
 
