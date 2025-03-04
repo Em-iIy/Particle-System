@@ -29,6 +29,7 @@ class Config {
 		std::optional<float>		view_box_dimensions;
 		std::optional<bool>			vsync;
 		std::optional<bool>			post_processing;
+		std::optional<float>		sim_speed;
 
 		// Particle settings
 		std::optional<mlm::vec3>	color1;

@@ -31,4 +31,5 @@ void main()
 		color += vec3(texture(screen_tex, tex.st + offsets[i])) * kernel[i];
 	}
 	FragColor = vec4(color, 1.0);
+	// FragColor += texture(screen_tex, tex.st);
 }

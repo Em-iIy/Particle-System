@@ -16,12 +16,9 @@ Shader shader;
 GLuint vao;
 GLuint vbo;
 
-extern int width;
-extern int height;
-
-std::map<GLchar, Character>	init_font(const char *font_file)
+Font	init_font(const char *font_file)
 {
-	std::map<GLchar, Character> characters;
+	Font characters;
 	
 	FT_Library ft;
 	if (FT_Init_FreeType(&ft))
@@ -55,7 +52,7 @@ std::map<GLchar, Character>	init_font(const char *font_file)
 		GLuint texture;
 		glGenTextures(1, &texture);
 			glBindTexture(GL_TEXTURE_2D, texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, face->glyph->bitmap.width, face->glyph->bitmap.rows, 0, GL_RED, GL_UNSIGNED_BYTE, face->glyph->bitmap.buffer);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, face->glyph->bitmap.width, face->glyph->bitmap.rows, 0, GL_RED, GL_UNSIGNED_BYTE, face->glyph->bitmap.buffer);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -76,7 +73,7 @@ std::map<GLchar, Character>	init_font(const char *font_file)
 	return (characters);
 }
 
-void	init_text_renderer(const char *vertex_shader, const char *fragment_shader)
+void	init_text_renderer(const char *vertex_shader, const char *fragment_shader, int &width, int &height)
 {
 	shader = Shader(vertex_shader, fragment_shader);
 	projection = mlm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
@@ -92,10 +89,9 @@ void	init_text_renderer(const char *vertex_shader, const char *fragment_shader)
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
-
 }
 
-void RenderText(std::map<GLchar, Character> &font, std::string text, float x, float y, float scale, mlm::vec3 color)
+void RenderText(Font &font, std::string text, float x, float y, float scale, mlm::vec3 color)
 {
 	float x_copy = x;
 	shader.use();

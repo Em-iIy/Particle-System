@@ -13,7 +13,18 @@ VAO::VAO(GLsizei size)
 	// remove this if this should create multiple vertex arrays
 	if (size != 1)
 		size = 1;
-	glGenVertexArrays(size, &ID);
+	glGenVertexArrays(size, &this->ID);
+}
+
+// Generates the Vertex array
+void VAO::init()
+{
+	glGenVertexArrays(1, &this->ID);
+}
+
+void VAO::init(GLsizei size)
+{
+	glGenVertexArrays(size, &this->ID);
 }
 
 // Links a VBO to the VAO using a certain layout

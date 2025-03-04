@@ -5,12 +5,10 @@ out vec4 FragColor;
 in vec3 pos;
 in vec3 dir;
 
-uniform vec3 gravity;
-uniform vec3 base;
-uniform vec3 color1;
-uniform vec3 color2;
-uniform float time;
-uniform float dimensions;
+layout (location = 1) uniform vec3 gravity;
+layout (location = 2) uniform vec3 color1;
+layout (location = 3) uniform vec3 color2;
+layout (location = 4) uniform float dimensions;
 
 // https://www.shadertoy.com/view/ttcyRS
 vec3 oklab_mix( vec3 colA, vec3 colB, float h )

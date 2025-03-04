@@ -20,12 +20,14 @@ FILES_SRCS =	main.cpp \
 				SSBO.cpp \
 				bmp.cpp \
 				textures.cpp \
-				input.cpp \
 				FrameBuffer.cpp \
 				RenderBuffer.cpp \
 				RenderText.cpp \
 				Config.cpp \
 				timer.cpp \
+				App_init.cpp \
+				App_input.cpp \
+				App_loop.cpp \
 
 FILES_OBJS = $(FILES_SRCS:.cpp=.o)
 
@@ -53,7 +55,7 @@ EMLM = $(DIR_EMLM)libmlm.a
 # ----------------------------------------Flags
 CC = c++
 CFLAGS = -std=c++20
-# CFLAGS += -Wall -Wextra -Werror
+CFLAGS += -Wall -Wextra -Werror
 CFLAGS += -O3
 # CFLAGS += -g
 # CFLAGS += -g -fsanitize=address

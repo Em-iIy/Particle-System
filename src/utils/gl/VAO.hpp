@@ -18,6 +18,9 @@ public:
 	VAO();
 	VAO(GLsizei size);
 
+	// Generates the Vertex array
+	void init();
+	void init(GLsizei size);
 	// Links a VBO to the VAO using a certain layout
 	void link_attr(VBO& VBO, GLuint layout, GLuint n, GLenum type, GLsizeiptr stride, void *offset);
 	// Links a VBO to the VAO using a certain layout

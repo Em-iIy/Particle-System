@@ -14,6 +14,7 @@ enum e_conf_tok {
 	VIEW_BOX_DIMENSIONS,
 	VSYNC,
 	POST_PROCESSING,
+	SIM_SPEED,
 
 	COLOR1,
 	COLOR2,
@@ -47,57 +48,59 @@ enum e_conf_tok {
 
 static e_conf_tok	check_token(std::string &data)
 {
-	if (data == "title")	
+	if (data == "title")
 		return (TITLE);
-	if (data == "fov")	
+	if (data == "fov")
 		return (FOV);
-	if (data == "fullscreen")	
+	if (data == "fullscreen")
 		return (FULLSCREEN);
-	if (data == "width")	
+	if (data == "width")
 		return (WIDTH);
-	if (data == "height")	
+	if (data == "height")
 		return (HEIGHT);
-	if (data == "view_box_dimensions")	
+	if (data == "view_box_dimensions")
 		return (VIEW_BOX_DIMENSIONS);
-	if (data == "vsync")	
+	if (data == "vsync")
 		return (VSYNC);
-	if (data == "post_processing")	
+	if (data == "post_processing")
 		return (POST_PROCESSING);
-	if (data == "color1")	
+	if (data == "sim_speed")
+		return (SIM_SPEED);
+	if (data == "color1")
 		return (COLOR1);
-	if (data == "color2")	
+	if (data == "color2")
 		return (COLOR2);
-	if (data == "particle_count")	
+	if (data == "particle_count")
 		return (PARTICLE_COUNT);
-	if (data == "particle_mass")	
+	if (data == "particle_mass")
 		return (PARTICLE_MASS);
-	if (data == "particle_size")	
+	if (data == "particle_size")
 		return (PARTICLE_SIZE);
-	if (data == "particle_init_pos")	
+	if (data == "particle_init_pos")
 		return (PARTICLE_INIT_POSITION);
-	if (data == "particle_init_radius")	
+	if (data == "particle_init_radius")
 		return (PARTICLE_INIT_RADIUS);
-	if (data == "gravity_mass")	
+	if (data == "gravity_mass")
 		return (GRAVITY_MASS);
-	if (data == "gravity_static")	
+	if (data == "gravity_static")
 		return (GRAVITY_STATIC);
-	if (data == "font")	
+	if (data == "font")
 		return (FONT);
-	if (data == "particle_vert")	
+	if (data == "particle_vert")
 		return (VERTEX_SHADER_PARTICLE);
-	if (data == "particle_frag")	
+	if (data == "particle_frag")
 		return (FRAGMENT_SHADER_PARTICLE);
-	if (data == "font_vert")	
+	if (data == "font_vert")
 		return (VERTEX_SHADER_FONT);
-	if (data == "font_frag")	
+	if (data == "font_frag")
 		return (FRAGMENT_SHADER_FONT);
-	if (data == "post_processing_vert")	
+	if (data == "post_processing_vert")
 		return (VERTEX_SHADER_POST_PROCESSING);
-	if (data == "post_processing_frag")	
+	if (data == "post_processing_frag")
 		return (FRAGMENT_SHADER_POST_PROCESSING);
-	if (data == "particle_init_comp")	
+	if (data == "particle_init_comp")
 		return (COMPUTE_SHADER_INIT);
-	if (data == "particle_physics_comp")	
+	if (data == "particle_physics_comp")
 		return (COMPUTE_SHADER_PHYSICS);
 	if (data == "#" || data == "")
 		return (COMMENT);
@@ -232,6 +235,9 @@ void	Config::parse_line(const std::string &line)
 	case POST_PROCESSING:
 		parse_1bool(params, this->post_processing);
 		break;
+	case SIM_SPEED:
+		parse_1f(params, this->sim_speed);
+		break;
 	case COLOR1:
 		parse_vec3(params, this->color1);
 		break;
@@ -321,6 +327,8 @@ void	Config::verify()
 		throw std::runtime_error("vsync" + msg);
 	if (!this->post_processing.has_value())
 		throw std::runtime_error("post_processing" + msg);
+	if (!this->sim_speed.has_value() || this->sim_speed <= 0)
+		throw std::runtime_error("sim_speed" + msg);
 
 	if (!this->color1.has_value() ||
 		(this->color1->x < 0.0f || this->color1->x > 1.0f) ||
