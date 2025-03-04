@@ -49,5 +49,5 @@ void	SSBO::unbind()
 
 void	SSBO::del()
 {
-
+	glDeleteBuffers(1, &this->ID);
 }

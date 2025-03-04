@@ -28,6 +28,7 @@ FILES_SRCS =	main.cpp \
 				App_init.cpp \
 				App_input.cpp \
 				App_loop.cpp \
+				App_delete.cpp \
 
 FILES_OBJS = $(FILES_SRCS:.cpp=.o)
 

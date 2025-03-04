@@ -43,7 +43,7 @@ State::State(Config &config): pause(false), debug(false), grav(false)
 	this->color2 = *(config.color2);
 }
 
-Initialized::Initialized(): gl(false), window(false)
+Initialized::Initialized(): gl(false), window(false), shaders(false), buffers(false), text(false)
 {}
 
 Metrics::Metrics(): frame_counter(0), frame_time(0.0f), render_timer(0.0f), compute_timer(0.0f), post_processing_timer(0.0f)
@@ -54,13 +54,9 @@ App::App()
 
 }
 
-App::~App()
-{
-
-}
-
 void	App::init_gl()
 {
+	std::cout << "Initializing GLFW & OpenGL..." << std::endl;
 	// Initialize GLFW and set version to 4.3
 	init_glfw();
 	this->initialized.gl = true;
@@ -92,21 +88,29 @@ void	App::init_gl()
 
 void	App::init_shaders(Config &config)
 {
+	std::cout << "Initializing shaders..." << std::endl;
 	this->particle_render = Shader(config.particle_vert->c_str(), config.particle_frag->c_str());
 	this->particle_init = ComputeShader(config.particle_init_comp->c_str());
 	this->particle_physics = ComputeShader(config.particle_physics_comp->c_str());
 	if (this->settings.post_processing == true)
 		this->post_proc_shader = Shader(config.post_processing_vert->c_str(), config.post_processing_frag->c_str());
+	
+	this->initialized.shaders = true;
 }
 
 void	App::init_text(const char *font_file, const char *shader_vert, const char *shader_frag)
 {
+	std::cout << "Initializing font..." << std::endl;
 	this->font = init_font(font_file);
+	std::cout << "Initializing text renderer..." << std::endl;
 	init_text_renderer(shader_vert, shader_frag, this->settings.width, this->settings.height);
+
+	this->initialized.text = true;
 }
 
 void	App::init_buffers()
 {
+	std::cout << "Initializing buffers..." << std::endl;
 	GLfloat vertices[] = {
 		1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
 		-1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
@@ -131,10 +135,13 @@ void	App::init_buffers()
 	this->particle_vao.link_attr_ssbo(this->particle_ssbo, 0, 3, GL_FLOAT, sizeof(GLfloat) * 8, (void *)0);
 	this->particle_vao.link_attr_ssbo(this->particle_ssbo, 1, 3, GL_FLOAT, sizeof(GLfloat) * 8, (void *)(sizeof(GLfloat) * 4));
 	this->particle_vao.unbind();
+
+	this->initialized.buffers = true;
 }
 
 void	App::init_particles()
 {
+	std::cout << "Initializing particles..." << std::endl;
 	// Setup shader
 	this->particle_init.use();
 	this->particle_ssbo.bind();

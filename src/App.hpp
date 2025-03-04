@@ -63,6 +63,9 @@ struct Initialized {
 
 	bool	gl;
 	bool	window;
+	bool	shaders;
+	bool	buffers;
+	bool	text;
 };
 
 struct Metrics {
@@ -113,6 +116,11 @@ class App
 
 		void				post_processing();
 		void				render_text();
+
+		void				delete_text();
+		void				delete_shaders();
+		void				delete_buffers();
+		void				delete_gl();
 
 	public:
 		GLFWwindow			*window;

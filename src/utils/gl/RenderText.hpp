@@ -14,5 +14,6 @@ struct Character {
 typedef std::map<GLchar, Character> Font;
 
 Font	init_font(const char *font_file);
+void	delete_text_renderer();
 void	init_text_renderer(const char *vertex_shader, const char *fragment_shader, int &width, int &height);
 void	RenderText(Font &font, std::string text, float x, float y, float scale, mlm::vec3 color);

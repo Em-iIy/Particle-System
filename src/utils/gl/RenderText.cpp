@@ -73,6 +73,13 @@ Font	init_font(const char *font_file)
 	return (characters);
 }
 
+void	delete_text_renderer()
+{
+	shader.del();
+	glDeleteBuffers(1, &vao);
+	glDeleteBuffers(1, &vbo);
+}
+
 void	init_text_renderer(const char *vertex_shader, const char *fragment_shader, int &width, int &height)
 {
 	shader = Shader(vertex_shader, fragment_shader);

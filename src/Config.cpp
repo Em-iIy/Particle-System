@@ -396,6 +396,7 @@ void	Config::load(std::filesystem::path path)
 {
 	if (std::filesystem::exists(path) == false)
 		throw std::runtime_error("Invalid config file");
+	std::cout << "Reading " << path.c_str() << "..." << std::endl;
 	char *data = read_file(path.c_str());
 	if (!data)
 	{

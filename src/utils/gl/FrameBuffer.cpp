@@ -42,6 +42,8 @@ void	FrameBuffer::unbind()
 
 void	FrameBuffer::del()
 {
+	this->render_buffer.del();
+	this->render_texture.del();
 	glDeleteFramebuffers(1, &this->ID);
 }
 
