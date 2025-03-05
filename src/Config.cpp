@@ -207,8 +207,8 @@ void	parse_filename(std::vector<std::string> &params, std::optional<std::filesys
 		throw std::runtime_error(params[0] + ": " + params[1] + " could not check permissions");
 	}
 	if ((perms & std::filesystem::perms::owner_read) == std::filesystem::perms::none &&
-           (perms & std::filesystem::perms::group_read) == std::filesystem::perms::none &&
-           (perms & std::filesystem::perms::others_read) == std::filesystem::perms::none)
+			(perms & std::filesystem::perms::group_read) == std::filesystem::perms::none &&
+			(perms & std::filesystem::perms::others_read) == std::filesystem::perms::none)
 		throw std::runtime_error(params[0] + ": " + params[1] + " invalid permissions");
 	dst = path;
 }

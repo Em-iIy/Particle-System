@@ -28,7 +28,7 @@ mat4	perspective(const float &fov, const float &aspect, const float &near, const
 		1 / (aspect * tan_fov), 0.0f, 0.0f, 0.0f,
 		0.0f, 1 / tan_fov, 0.0f, 0.0f,
 		0.0f, 0.0f, -(far / diff), -1.0f,
-		0.0f, 0.0f, -(far * near)  / diff, 0.0f
+		0.0f, 0.0f, -(far * near) / diff, 0.0f
 	));
 }
 

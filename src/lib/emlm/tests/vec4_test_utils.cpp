@@ -36,32 +36,32 @@ void	vec4_test_op_v4_f(mlm::vec4 v, float s, int op)
 
 void vec4_test_op_f_v4(float s, mlm::vec4 v, int op)
 {
-    mlm::vec4 result;
-    mlm::vec4 temp;
+	mlm::vec4 result;
+	mlm::vec4 temp;
 
 	std::cout << "test f " << op_str(op) << " v4\t";
-    switch (op)
+	switch (op)
 	{
-        case ADD:
-            temp = mlm::vec4(s + v.x, s + v.y, s + v.z, s + v.w);
-            result = s + v;
-            break ;
-        case SUB:
-            temp = mlm::vec4(s - v.x, s - v.y, s - v.z, s - v.w);
-            result = s - v;
-            break ;
-        case DIV:
-            temp = mlm::vec4(s / v.x, s / v.y, s / v.z, s / v.w);
-            result = s / v;
-            break ;
-        case MULT:
-            temp = mlm::vec4(s * v.x, s * v.y, s * v.z, s * v.w);
-            result = s * v;
-            break ;
-        default:
+		case ADD:
+			temp = mlm::vec4(s + v.x, s + v.y, s + v.z, s + v.w);
+			result = s + v;
+			break ;
+		case SUB:
+			temp = mlm::vec4(s - v.x, s - v.y, s - v.z, s - v.w);
+			result = s - v;
+			break ;
+		case DIV:
+			temp = mlm::vec4(s / v.x, s / v.y, s / v.z, s / v.w);
+			result = s / v;
+			break ;
+		case MULT:
+			temp = mlm::vec4(s * v.x, s * v.y, s * v.z, s * v.w);
+			result = s * v;
+			break ;
+		default:
 			std::cout << BG_RED << "OPERATOR ERROR" << RESET << std::endl;
-            return ;
-    }
+			return ;
+	}
 	test(result == temp);
 }
 
@@ -98,33 +98,33 @@ void	vec4_test_op_v4_v1(mlm::vec4 v, mlm::vec1 s, int op)
 
 void vec4_test_op_v1_v4(mlm::vec1 s, mlm::vec4 v, int op)
 {
-    mlm::vec4 result;
-    mlm::vec4 temp;
+	mlm::vec4 result;
+	mlm::vec4 temp;
 
 	std::cout << "test v1 " << op_str(op) << " v4\t";
-    switch (op)
+	switch (op)
 	{
-        case ADD:
-            temp = mlm::vec4(s.x + v.x, s.x + v.y, s.x + v.z, s.x + v.w);
-            result = s + v;
-            break ;
-        case SUB:
-            temp = mlm::vec4(s.x - v.x, s.x - v.y, s.x - v.z, s.x - v.w);
-            result = s - v;
-            break ;
-        case DIV:
-            temp = mlm::vec4(s.x / v.x, s.x / v.y, s.x / v.z, s.x / v.w);
-            result = s / v;
-            break ;
-        case MULT:
-            temp = mlm::vec4(s.x * v.x, s.x * v.y, s.x * v.z, s.x * v.w);
-            result = s * v;
-            break ;
-        default:
+		case ADD:
+			temp = mlm::vec4(s.x + v.x, s.x + v.y, s.x + v.z, s.x + v.w);
+			result = s + v;
+			break ;
+		case SUB:
+			temp = mlm::vec4(s.x - v.x, s.x - v.y, s.x - v.z, s.x - v.w);
+			result = s - v;
+			break ;
+		case DIV:
+			temp = mlm::vec4(s.x / v.x, s.x / v.y, s.x / v.z, s.x / v.w);
+			result = s / v;
+			break ;
+		case MULT:
+			temp = mlm::vec4(s.x * v.x, s.x * v.y, s.x * v.z, s.x * v.w);
+			result = s * v;
+			break ;
+		default:
 			std::cout << BG_RED << "OPERATOR ERROR" << RESET << std::endl;
-            return ;
-    }
-    test(result == temp);
+			return ;
+	}
+	test(result == temp);
 }
 
 void	vec4_test_op_v4_v4(mlm::vec4 v1, mlm::vec4 v2, int op)

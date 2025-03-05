@@ -90,7 +90,7 @@ $(NAME): $(DIR_OBJS) $(OBJS) $(EMLM)
 	$(CC) $(OBJS) -o $(NAME) $(EMLM) $(CFLAGS) $(LFLAGS) $(INC)
 
 $(DIR_OBJS)%.o: %.cpp
-	$(CC) -c $< -o $@  $(CFLAGS) $(INC)
+	$(CC) -c $< -o $@ $(CFLAGS) $(INC)
 
 $(DIR_OBJS):
 	mkdir -p $@

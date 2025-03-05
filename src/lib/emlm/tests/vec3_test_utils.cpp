@@ -36,32 +36,32 @@ void	vec3_test_op_v3_f(mlm::vec3 v, float s, int op)
 
 void vec3_test_op_f_v3(float s, mlm::vec3 v, int op)
 {
-    mlm::vec3 result;
-    mlm::vec3 temp;
+	mlm::vec3 result;
+	mlm::vec3 temp;
 
 	std::cout << "test f " << op_str(op) << " v3\t";
-    switch (op)
+	switch (op)
 	{
-        case ADD:
-            temp = mlm::vec3(s + v.x, s + v.y, s + v.z);
-            result = s + v;
-            break ;
-        case SUB:
-            temp = mlm::vec3(s - v.x, s - v.y, s - v.z);
-            result = s - v;
-            break ;
-        case DIV:
-            temp = mlm::vec3(s / v.x, s / v.y, s / v.z);
-            result = s / v;
-            break ;
-        case MULT:
-            temp = mlm::vec3(s * v.x, s * v.y, s * v.z);
-            result = s * v;
-            break ;
-        default:
+		case ADD:
+			temp = mlm::vec3(s + v.x, s + v.y, s + v.z);
+			result = s + v;
+			break ;
+		case SUB:
+			temp = mlm::vec3(s - v.x, s - v.y, s - v.z);
+			result = s - v;
+			break ;
+		case DIV:
+			temp = mlm::vec3(s / v.x, s / v.y, s / v.z);
+			result = s / v;
+			break ;
+		case MULT:
+			temp = mlm::vec3(s * v.x, s * v.y, s * v.z);
+			result = s * v;
+			break ;
+		default:
 			std::cout << BG_RED << "OPERATOR ERROR" << RESET << std::endl;
-            return ;
-    }
+			return ;
+	}
 	test(result == temp);
 }
 
@@ -98,33 +98,33 @@ void	vec3_test_op_v3_v1(mlm::vec3 v, mlm::vec1 s, int op)
 
 void vec3_test_op_v1_v3(mlm::vec1 s, mlm::vec3 v, int op)
 {
-    mlm::vec3 result;
-    mlm::vec3 temp;
+	mlm::vec3 result;
+	mlm::vec3 temp;
 
 	std::cout << "test v1 " << op_str(op) << " v3\t";
-    switch (op)
+	switch (op)
 	{
-        case ADD:
-            temp = mlm::vec3(s.x + v.x, s.x + v.y, s.x + v.z);
-            result = s + v;
-            break ;
-        case SUB:
-            temp = mlm::vec3(s.x - v.x, s.x - v.y, s.x - v.z);
-            result = s - v;
-            break ;
-        case DIV:
-            temp = mlm::vec3(s.x / v.x, s.x / v.y, s.x / v.z);
-            result = s / v;
-            break ;
-        case MULT:
-            temp = mlm::vec3(s.x * v.x, s.x * v.y, s.x * v.z);
-            result = s * v;
-            break ;
-        default:
+		case ADD:
+			temp = mlm::vec3(s.x + v.x, s.x + v.y, s.x + v.z);
+			result = s + v;
+			break ;
+		case SUB:
+			temp = mlm::vec3(s.x - v.x, s.x - v.y, s.x - v.z);
+			result = s - v;
+			break ;
+		case DIV:
+			temp = mlm::vec3(s.x / v.x, s.x / v.y, s.x / v.z);
+			result = s / v;
+			break ;
+		case MULT:
+			temp = mlm::vec3(s.x * v.x, s.x * v.y, s.x * v.z);
+			result = s * v;
+			break ;
+		default:
 			std::cout << BG_RED << "OPERATOR ERROR" << RESET << std::endl;
-            return ;
-    }
-    test(result == temp);
+			return ;
+	}
+	test(result == temp);
 }
 
 void	vec3_test_op_v3_v3(mlm::vec3 v1, mlm::vec3 v2, int op)

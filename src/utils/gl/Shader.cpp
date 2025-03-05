@@ -68,13 +68,13 @@ void	Shader::load(const char *vertex_source, const char *fragment_source)
 	glAttachShader(this->id, fragment_shader);
 	glLinkProgram(this->id);
 	glGetProgramiv(this->id, GL_LINK_STATUS, &success);
-    if (!success) {
-        glGetProgramInfoLog(this->id, 512, NULL, infoLog);
+	if (!success) {
+		glGetProgramInfoLog(this->id, 512, NULL, infoLog);
 		std::cerr << "shader linking error:\n" << infoLog << std::endl;
 		glDeleteShader(vertex_shader);
 		glDeleteShader(fragment_shader);
 		throw std::exception();
-    }
+	}
 	glDeleteShader(vertex_shader);
 	glDeleteShader(fragment_shader);
 }

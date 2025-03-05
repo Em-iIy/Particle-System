@@ -12,8 +12,8 @@ vec3::vec3(const vec1 &_x, const float &_y, const vec1 &_z): x(_x.x), y(_y), z(_
 vec3::vec3(const vec1 &_x, const vec1 &_y, const float &_z): x(_x.x), y(_y.x), z(_z) {}
 vec3::vec3(const vec1 &_x, const vec1 &_y, const vec1 &_z): x(_x.x), y(_y.x), z(_z.x) {}
 
-vec3::vec3(const vec2 &src, const float &_z): x(src.x), y(src.y), z(_z)  {}
-vec3::vec3(const vec2 &src, const vec1 &_z): x(src.x), y(src.y), z(_z.x)  {}
+vec3::vec3(const vec2 &src, const float &_z): x(src.x), y(src.y), z(_z) {}
+vec3::vec3(const vec2 &src, const vec1 &_z): x(src.x), y(src.y), z(_z.x) {}
 vec3::vec3(const float &_x, const vec2 &src): x(_x), y(src.x), z(src.y) {}
 vec3::vec3(const vec1 &_x, const vec2 &src): x(_x.x), y(src.x), z(src.y) {}
 

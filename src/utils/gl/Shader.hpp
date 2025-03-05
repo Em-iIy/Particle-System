@@ -21,5 +21,4 @@ class Shader {
 		void	set_int(const std::string &name, int value) const;
 		void	set_vec3(const std::string &name, const mlm::vec3 &value) const;
 		void	set_mat4(const std::string &name, mlm::mat4 &value) const;
-
 };

@@ -2,15 +2,13 @@
 Created by: Emily (Em_iIy) Winnink
 Created on: 16/12/2024
 */
-
 #pragma once
 
 #include <GLAD/glad.h>
 #include <emlm/emlm.hpp>
 #include <string>
 
-class ComputeShader
-{
+class ComputeShader {
 	public:
 		GLuint id;
 

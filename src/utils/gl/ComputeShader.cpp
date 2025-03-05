@@ -40,12 +40,12 @@ void	ComputeShader::load(const char *compute_source)
 	glAttachShader(this->id, compute_shader);
 	glLinkProgram(this->id);
 	glGetProgramiv(this->id, GL_LINK_STATUS, &success);
-    if (!success) {
-        glGetProgramInfoLog(this->id, 512, NULL, info_log);
+	if (!success) {
+		glGetProgramInfoLog(this->id, 512, NULL, info_log);
 		std::cerr << "shader linking error:\n" << info_log << std::endl;
 		glDeleteShader(compute_shader);
 		throw std::exception();
-    }
+	}
 	glDeleteShader(compute_shader);
 }
 

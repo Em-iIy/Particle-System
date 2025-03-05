@@ -79,8 +79,7 @@ struct Metrics {
 	float	post_processing_timer;
 };
 
-class App
-{
+class App {
 	private:
 		Settings			settings;
 		State				state;
