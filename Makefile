@@ -9,6 +9,7 @@ FILES_SRCS =	main.cpp \
 				glad.cpp \
 				delta_time_update.cpp \
 				read_file.cpp \
+				rand_vec3.cpp \
 				split.cpp \
 				Window.cpp \
 				Key.cpp \

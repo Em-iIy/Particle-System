@@ -46,6 +46,9 @@ enum e_conf_tok {
 	ERROR
 };
 
+/*
+//	Discern which setting is being set
+*/
 static e_conf_tok	check_token(std::string &data)
 {
 	if (data == "title")
@@ -107,6 +110,9 @@ static e_conf_tok	check_token(std::string &data)
 	return (ERROR);
 }
 
+/*
+//	Verify and set a single float
+*/
 void	parse_1f(std::vector<std::string> &params, std::optional<float> &dst)
 {
 	if (params.size() != 2)
@@ -124,6 +130,9 @@ void	parse_1f(std::vector<std::string> &params, std::optional<float> &dst)
 	
 }
 
+/*
+//	Verify and set a single integer
+*/
 void	parse_1i(std::vector<std::string> &params, std::optional<int> &dst)
 {
 	if (params.size() != 2)
@@ -140,6 +149,9 @@ void	parse_1i(std::vector<std::string> &params, std::optional<int> &dst)
 	}
 }
 
+/*
+//	Verify and set a single boolean
+*/
 void	parse_1bool(std::vector<std::string> &params, std::optional<bool> &dst)
 {
 	if (params.size() != 2)
@@ -154,6 +166,9 @@ void	parse_1bool(std::vector<std::string> &params, std::optional<bool> &dst)
 		throw std::runtime_error(params[0] + " invalid parameters");
 }
 
+/*
+//	Verify and set a vec3
+*/
 void	parse_vec3(std::vector<std::string> &params, std::optional<mlm::vec3> &dst)
 {
 	if (params.size() != 4)
@@ -174,6 +189,9 @@ void	parse_vec3(std::vector<std::string> &params, std::optional<mlm::vec3> &dst)
 	}
 }
 
+/*
+//	Verify and set a filename
+*/
 void	parse_filename(std::vector<std::string> &params, std::optional<std::filesystem::path> &dst)
 {
 	if (params.size() != 2)
@@ -195,9 +213,13 @@ void	parse_filename(std::vector<std::string> &params, std::optional<std::filesys
 	dst = path;
 }
 
+/*
+//	Split up a single line and parse according to the first token
+*/
 void	Config::parse_line(const std::string &line)
 {
 	static std::vector<std::string> params;
+	// reserve memory for a maximum reasonable amout of parameters
 	params.reserve(16);
 	split(params, line, " ");
 	switch (check_token(params[0]))
@@ -295,9 +317,13 @@ void	Config::parse_line(const std::string &line)
 	default:
 		break;
 	}
+	// Clears the content of the parameters without losing the memory location
 	params.clear();
 }
 
+/*
+//	Splits config file in to separare lines, and parses line by line
+*/
 void	Config::parse(const char *data)
 {
 	std::vector<std::string> lines = split(data, "\n");
@@ -307,6 +333,9 @@ void	Config::parse(const char *data)
 	}
 }
 
+/*
+//	Verify if every setting has been set, and the values are valid
+*/
 void	Config::verify()
 {
 	const std::string msg = ": invalid value";
@@ -392,6 +421,9 @@ void	Config::verify()
 		throw std::runtime_error("particle_physics_comp" + msg);
 }
 
+/*
+//	Load in the config file
+*/
 void	Config::load(std::filesystem::path path)
 {
 	if (std::filesystem::exists(path) == false)

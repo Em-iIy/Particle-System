@@ -33,4 +33,4 @@ void						split(std::vector<std::string> &vect, const std::string &str, const st
 
 float						delta_time_update(void);
 
-void						print_controls(void);
+mlm::vec3					rand_vec3();

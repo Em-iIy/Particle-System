@@ -8,6 +8,11 @@ void	cursor_position_callback(GLFWwindow *window, double x_pos, double y_pos);
 
 Settings::Settings() {}
 
+/*
+//////////////////////////////////////////////////////////////
+//	Transfer the config data into structs for easier access	//
+//////////////////////////////////////////////////////////////
+*/
 Settings::Settings(Config &config)
 {
 	// Window/screen settings
@@ -54,6 +59,9 @@ App::App()
 
 }
 
+/*
+//	Init GLFW then load opengl then create a window
+*/
 void	App::init_gl()
 {
 	std::cout << "Initializing GLFW & OpenGL..." << std::endl;
@@ -86,6 +94,9 @@ void	App::init_gl()
 	this->initialized.window = true;
 }
 
+/*
+//	Compile all the compute and render shaders
+*/
 void	App::init_shaders(Config &config)
 {
 	std::cout << "Initializing shaders..." << std::endl;
@@ -98,6 +109,9 @@ void	App::init_shaders(Config &config)
 	this->initialized.shaders = true;
 }
 
+/*
+//	Read in the font file and initialize the text render buffers/shaders
+*/
 void	App::init_text(const char *font_file, const char *shader_vert, const char *shader_frag)
 {
 	std::cout << "Initializing font..." << std::endl;
@@ -108,6 +122,9 @@ void	App::init_text(const char *font_file, const char *shader_vert, const char *
 	this->initialized.text = true;
 }
 
+/*
+//	Create all the buffers for rendering and setup their data attributes
+*/
 void	App::init_buffers()
 {
 	std::cout << "Initializing buffers..." << std::endl;
@@ -139,6 +156,9 @@ void	App::init_buffers()
 	this->initialized.buffers = true;
 }
 
+/*
+//	Initialize the particles to the start position using the init compute shader
+*/
 void	App::init_particles()
 {
 	std::cout << "Initializing particles..." << std::endl;
@@ -154,6 +174,9 @@ void	App::init_particles()
 	glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
 }
 
+/*
+//	Initializes the necessary buffers/shaders and data for the simulation to run
+*/
 void	App::init(Config &config)
 {
 	// Init settings from config
@@ -174,10 +197,12 @@ void	App::init(Config &config)
 	this->init_shaders(config);
 	this->init_particles();
 
+	// Set correct render settings
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glPointSize(this->settings.particle_size);
 
+	// Set cursor callback function
 	glfwSetCursorPosCallback(this->window, cursor_position_callback);
 }

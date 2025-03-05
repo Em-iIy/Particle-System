@@ -93,7 +93,7 @@ void	Tex2d::load(const bmp_t &bmp)
 		this->format = GL_RGBA;
 	}
 
-	glGenTextures(1, &this->ID);
+	glGenTextures(1, &this->id);
 	this->bind();
 	
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, this->wrap_s);
@@ -106,12 +106,12 @@ void	Tex2d::load(const bmp_t &bmp)
 	glTexImage2D(GL_TEXTURE_2D, 0, format, bmp.width, bmp.height, 0, format, GL_UNSIGNED_BYTE, bmp.data);
 
 	// Generate mipmap for the texture
-	glGenerateMipmap(this->ID);
+	glGenerateMipmap(this->id);
 }
 
 void	Tex2d::load_render_texture(GLsizei width, GLsizei height, GLenum format, GLenum type)
 {
-	glGenTextures(1, &this->ID);
+	glGenTextures(1, &this->id);
 	this->bind();
 
 	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, type, NULL);
@@ -127,16 +127,16 @@ void	Tex2d::load(const std::string &img)
 	this->load(img.c_str());
 }
 
-const GLuint	&Tex2d::get_ID() const
+const GLuint	&Tex2d::get_id() const
 {
-	return (this->ID);
+	return (this->id);
 }
 
 void	Tex2d::bind()
 {
-	glBindTexture(GL_TEXTURE_2D, this->ID);
+	glBindTexture(GL_TEXTURE_2D, this->id);
 }
 void	Tex2d::del()
 {
-	glDeleteTextures(1, &this->ID);
+	glDeleteTextures(1, &this->id);
 }

@@ -4,8 +4,11 @@ Created on: 3/3/2025
 */
 #include "App.hpp"
 
-extern float	g_delta_time;
+float	g_delta_time = 0.0f;
 
+/*
+//	Calculates and updates the fps over the last second
+*/
 void	App::update_fps()
 {
 	if (this->metrics.frame_time > 1.0f)
@@ -19,6 +22,9 @@ void	App::update_fps()
 	this->metrics.frame_time += g_delta_time;
 }
 
+/*
+//	Update the gravity to the mouse location if it is set to follow the mouse
+*/
 void	App::update_gravity()
 {
 	if (this->settings.gravity_static == false)
@@ -27,6 +33,14 @@ void	App::update_gravity()
 	}
 }
 
+/*
+//	Updates:
+//		- delta_time
+//		- gravity position
+//		- fps calculation
+//	
+//	It also checks for input, and most importantly runs the particle physics shader
+*/
 void	App::update()
 {
 	float		mass = 0.0f;
@@ -41,6 +55,8 @@ void	App::update()
 	{
 		if (this->state.grav == true)
 			mass = this->settings.gravity_mass;
+
+		// Enable and set up particle physics shader
 		this->particle_physics.use();
 		this->particle_ssbo.bind();
 		glUniform3f(0, this->state.gravity.x, this->state.gravity.y, this->state.gravity.z);
@@ -48,26 +64,36 @@ void	App::update()
 		glUniform1f(2, this->settings.sim_speed);
 		glUniform1f(3, mass);
 		glUniform1f(4, this->settings.particle_mass);
+
+		// Run the compute shader
 		glDispatchCompute((GLuint)this->settings.particle_count / WORKGROUP_SIZE, 1, 1);
 		glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
 	}
 	this->metrics.compute_timer = timer::u_elapsed();
 }
 
+/*
+//	Runs the post processing shader on the frame buffer
+*/
 void	App::post_processing()
 {
+	// Unbind the post processing frame buffer to switch back to the regular render frame buffer
 	this->post_proc_frame_buffer.unbind();
 	glDisable(GL_DEPTH_TEST);
 
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
+	// Draw a quad using the post processing frame buffer as a texture
 	this->post_proc_shader.use();
 	this->post_proc_frame_buffer.render_texture.bind();
 	this->post_proc_vao.bind();
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
 
+/*
+//	Prints 'debug' info to the screen
+*/
 void	App::render_info()
 {
 	std::string info = "";
@@ -85,9 +111,13 @@ void	App::render_info()
 	render_text(this->font, info, 0.0f, this->settings.height - 40.0f, 0.5f, mlm::vec3(1.0));
 }
 
+/*
+//	Handles all the rendering
+*/
 void	App::render()
 {
 	timer::start();
+	// Bind the post processing frame buffer if it is set to true
 	if (this->settings.post_processing)
 	{
 		this->post_proc_frame_buffer.bind();
@@ -96,32 +126,43 @@ void	App::render()
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	// Set the projection matrix that translate the particles from world space to screen space
 	mlm::mat4	projection = mlm::perspective(
 		mlm::radians(this->settings.fov),
 		(float)this->settings.width / (float)this->settings.height,
 		0.1f,
 		2.0f * this->settings.view_box_dimensions
 	);
+	// Enable and set up particle shader
 	this->particle_render.use();
 	glUniformMatrix4fv(0, 1, GL_FALSE, &(projection[0][0]));
 	glUniform3f(1, this->state.gravity.x, this->state.gravity.y, this->state.gravity.z);
 	glUniform3f(2, this->state.color1.x, this->state.color1.y, this->state.color1.z);
 	glUniform3f(3, this->state.color2.x, this->state.color2.y, this->state.color2.z);
 	glUniform1f(4, this->settings.view_box_dimensions);
+	// Render the particles
 	this->particle_vao.bind();
 	glDrawArrays(GL_POINTS, 0, this->settings.particle_count);
 	this->metrics.render_timer = timer::u_elapsed();
 	
 	timer::start();
+	// Run the post processing shader if enabled
 	if (this->settings.post_processing)
 		this->post_processing();
+	
 	this->metrics.post_processing_timer = timer::u_elapsed();
+	// Print 'debug' info if enabled
 	if (this->state.debug)
 		this->render_info();
+
+	// Swap to the 2nd main render frame buffer and check for events
 	glfwSwapBuffers(window);
 	glfwPollEvents();
 }
 
+/*
+//	Returns whether the simulation is still running
+*/
 bool	App::is_running()
 {
 	return (!glfwWindowShouldClose(this->window));

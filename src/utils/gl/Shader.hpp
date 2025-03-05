@@ -8,7 +8,7 @@ Created on: 07/09/2024
 
 class Shader {
 	public:
-		unsigned int _id;
+		unsigned int id;
 	
 		Shader();
 		Shader(const char *vertex_file_name, const char *fragment_file_name);

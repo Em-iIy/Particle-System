@@ -15,7 +15,7 @@ void	delete_texture(uint texture);
 class Tex2d
 {
 private:
-	GLuint	ID;
+	GLuint	id;
 
 	GLint	wrap_s;
 	GLint	wrap_t;
@@ -33,7 +33,7 @@ public:
 	void	load(const std::string &img);
 	void	load_render_texture(GLsizei width, GLsizei height, GLenum format, GLenum type);
 	
-	const GLuint	&get_ID() const; 
+	const GLuint	&get_id() const; 
 
 	void	bind();
 	void	del();

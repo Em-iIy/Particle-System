@@ -11,22 +11,22 @@ EBO::EBO(void)
 // Constructor that generates a Elements Buffer Object and links it to indices
 EBO::EBO(std::vector<uint> &indices)
 {
-	glGenBuffers(1, &ID);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
+	glGenBuffers(1, &this->id);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->id);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint), indices.data(), GL_STATIC_DRAW);
 }
 
-EBO::EBO(GLuint* indices, GLsizeiptr size)
+EBO::EBO(GLuint *indices, GLsizeiptr size)
 {
-	glGenBuffers(1, &ID);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
+	glGenBuffers(1, &this->id);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->id);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, indices, GL_STATIC_DRAW);
 }
 
 // Binds the EBO
 void EBO::bind()
 {
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->id);
 }
 
 // Unbinds the EBO
@@ -38,5 +38,5 @@ void EBO::unbind()
 // Deletes the EBO
 void EBO::del()
 {
-	glDeleteBuffers(1, &ID);
+	glDeleteBuffers(1, &this->id);
 }

@@ -14,11 +14,11 @@ void	FrameBuffer::generate(GLsizei in_width, GLsizei in_height)
 {
 	this->width = in_width;
 	this->height = in_height;
-	glGenFramebuffers(1, &this->ID);
+	glGenFramebuffers(1, &this->id);
 	this->bind();
 
 	this->render_texture.load_render_texture(width, height, GL_RGB, GL_UNSIGNED_BYTE);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this->render_texture.get_ID(), 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this->render_texture.get_id(), 0);
 
 	this->render_buffer.generate();
 	this->render_buffer.bind();
@@ -31,7 +31,7 @@ void	FrameBuffer::generate(GLsizei in_width, GLsizei in_height)
 
 void	FrameBuffer::bind()
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, this->ID);
+	glBindFramebuffer(GL_FRAMEBUFFER, this->id);
 }
 
 void	FrameBuffer::unbind()
@@ -44,17 +44,17 @@ void	FrameBuffer::del()
 {
 	this->render_buffer.del();
 	this->render_texture.del();
-	glDeleteFramebuffers(1, &this->ID);
+	glDeleteFramebuffers(1, &this->id);
 }
 
 void	FrameBuffer::link_render_texture(GLenum attachment)
 {
-	glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, this->render_texture.get_ID(), 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, this->render_texture.get_id(), 0);
 }
 
 void	FrameBuffer::link_render_buffer(RenderBuffer &rbo)
 {
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo.ID);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo.id);
 }
 
 bool	FrameBuffer::check_status()
@@ -66,4 +66,3 @@ bool	FrameBuffer::check_status()
 	}
 	return (true);
 }
-

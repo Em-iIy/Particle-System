@@ -10,7 +10,7 @@ Created on: 16/01/2025
 class RenderBuffer
 {
 public:
-	GLuint ID;
+	GLuint id;
 
 	RenderBuffer();
 	void	generate();

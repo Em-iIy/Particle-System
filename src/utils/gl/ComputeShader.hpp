@@ -12,7 +12,7 @@ Created on: 16/12/2024
 class ComputeShader
 {
 	public:
-		GLuint ID;
+		GLuint id;
 
 		ComputeShader();
 		ComputeShader(const char *file_name);

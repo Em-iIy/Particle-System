@@ -2,10 +2,10 @@
 
 // Holds all state information relevant to a character as loaded using FreeType
 struct Character {
-    unsigned int	tex_id; // ID handle of the glyph texture
-    mlm::vec2		size;      // Size of glyph
-    mlm::vec2		bearing;   // Offset from baseline to left/top of glyph
-    unsigned int	advance;   // Horizontal offset to advance to next glyph
+	unsigned int	tex_id;		// ID handle of the glyph texture
+	mlm::vec2		size;		// Size of glyph
+	mlm::vec2		bearing;	// Offset from baseline to left/top of glyph
+	unsigned int	advance;	// Horizontal offset to advance to next glyph
 };
 
 #include <GLAD/glad.h>

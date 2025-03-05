@@ -55,6 +55,9 @@ void	App::delete_gl()
 	}
 }
 
+/*
+//	Delete everything that has been initialized
+*/
 App::~App()
 {
 	this->delete_text();

@@ -18,10 +18,7 @@ ComputeShader::ComputeShader(const char *file_name)
 }
 
 
-ComputeShader::~ComputeShader()
-{
-
-}
+ComputeShader::~ComputeShader() {}
 
 void	ComputeShader::load(const char *compute_source)
 {
@@ -39,12 +36,12 @@ void	ComputeShader::load(const char *compute_source)
 		std::cerr << "compute shader compilation error:\n" << info_log << std::endl;
 		throw std::exception();
 	}
-	this->ID = glCreateProgram();
-	glAttachShader(this->ID, compute_shader);
-	glLinkProgram(this->ID);
-	glGetProgramiv(this->ID, GL_LINK_STATUS, &success);
+	this->id = glCreateProgram();
+	glAttachShader(this->id, compute_shader);
+	glLinkProgram(this->id);
+	glGetProgramiv(this->id, GL_LINK_STATUS, &success);
     if (!success) {
-        glGetProgramInfoLog(this->ID, 512, NULL, info_log);
+        glGetProgramInfoLog(this->id, 512, NULL, info_log);
 		std::cerr << "shader linking error:\n" << info_log << std::endl;
 		glDeleteShader(compute_shader);
 		throw std::exception();
@@ -54,40 +51,40 @@ void	ComputeShader::load(const char *compute_source)
 
 void	ComputeShader::use()
 {
-	glUseProgram(this->ID);
+	glUseProgram(this->id);
 }
 
 void	ComputeShader::del()
 {
-	glDeleteProgram(this->ID);
+	glDeleteProgram(this->id);
 }
 
 void ComputeShader::set_int(const std::string &name, int value) const
 {
-	glUniform1i(glGetUniformLocation(this->ID, name.c_str()), value);
+	glUniform1i(glGetUniformLocation(this->id, name.c_str()), value);
 }
 
 void ComputeShader::set_uint(const std::string &name, uint value) const
 {
-	glUniform1ui(glGetUniformLocation(this->ID, name.c_str()), value);
+	glUniform1ui(glGetUniformLocation(this->id, name.c_str()), value);
 }
 
 void ComputeShader::set_float(const std::string &name, float value) const
 {
-	glUniform1f(glGetUniformLocation(this->ID, name.c_str()), value);
+	glUniform1f(glGetUniformLocation(this->id, name.c_str()), value);
 }
 
 void ComputeShader::set_vec3(const std::string &name, const mlm::vec3 &value) const
 {
-	glUniform3f(glGetUniformLocation(this->ID, name.c_str()), value.x, value.y, value.z);
+	glUniform3f(glGetUniformLocation(this->id, name.c_str()), value.x, value.y, value.z);
 }
 
 void ComputeShader::set_vec4(const std::string &name, const mlm::vec4 &value) const
 {
-	glUniform4f(glGetUniformLocation(this->ID, name.c_str()), value.x, value.y, value.z, value.w);
+	glUniform4f(glGetUniformLocation(this->id, name.c_str()), value.x, value.y, value.z, value.w);
 }
 
 void ComputeShader::set_mat4(const std::string &name, mlm::mat4 &value) const
 {
-	glUniformMatrix4fv(glGetUniformLocation(this->ID, name.c_str()), 1, GL_FALSE, &(value[0][0]));
+	glUniformMatrix4fv(glGetUniformLocation(this->id, name.c_str()), 1, GL_FALSE, &(value[0][0]));
 }

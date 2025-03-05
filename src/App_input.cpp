@@ -5,17 +5,20 @@ Created on: 3/3/2025
 #include "App.hpp"
 #include <cmath>
 
-mlm::vec3	rand_vec3();
-
 mlm::vec2 mouse_coords;
 
+/*
+//	Prints color1 and color2 in the format for the config file for reuse
+*/
 static void	print_colors(mlm::vec3 &color1, mlm::vec3 &color2)
 {
 	std::cout << "color1 " << color1.x << " " << color1.y << " " << color1.z << std::endl;
 	std::cout << "color2 " << color2.x << " " << color2.y << " " << color2.z << std::endl;
 }
 
-
+/*
+//	Updates mouse postion on cursor movement
+*/
 void	cursor_position_callback(GLFWwindow *window, double x_pos, double y_pos)
 {
 	(void)window; // haha funny
@@ -23,6 +26,9 @@ void	cursor_position_callback(GLFWwindow *window, double x_pos, double y_pos)
 	mouse_coords.y = y_pos;
 }
 
+/*
+//	Translates pixel coords to world coords at half the depth of the viewbox
+*/
 mlm::vec3	App::mouse_to_screen()
 {
 	float		world_z;
@@ -42,8 +48,9 @@ mlm::vec3	App::mouse_to_screen()
 	return (mlm::vec3(world, world_z));
 }
 
-
-
+/*
+//	Processes and keeps track of key presses
+*/
 void	App::process_input()
 {
 	static Key esc(this->window, GLFW_KEY_ESCAPE);
@@ -55,6 +62,7 @@ void	App::process_input()
 	static Key r(this->window, GLFW_KEY_R);
 	static Key ctrl(this->window, GLFW_KEY_LEFT_CONTROL);
 
+	// Update key status
 	esc.update();
 	tab.update();
 	space.update();
@@ -64,44 +72,52 @@ void	App::process_input()
 	r.update();
 	ctrl.update();
 
+	// Closes the program
 	if (esc.is_pressed())
 	{
 		glfwSetWindowShouldClose(this->window, true);
-		std::cout << "Goodbye!" << std::endl;
+		// Prints the last colors used to potentially reuse
 		print_colors(this->state.color1, this->state.color2);
 	}
+	// Turns the gravity point on and off
 	if (tab.is_pressed())
 	{
+		// If the gravity point has to be static and the gravity is off, update the gravity position
 		if (this->settings.gravity_static == true && this->state.grav == false)
 		{
 			this->state.gravity = this->mouse_to_screen();
 		}
 		this->state.grav = !this->state.grav;
 	}
+	// Pauses the simulation
 	if (space.is_pressed())
 	{
 		this->state.pause = !this->state.pause;
 	}
+	// Updates both colors
 	if (c.is_pressed())
 	{
 		this->state.color1 = rand_vec3();
 		this->state.color2 = rand_vec3();
 	}
+	// Updates color1
 	if (c1.is_pressed())
 	{
 		this->state.color1 = rand_vec3();
 	}
+	// Updates color2
 	if (c2.is_pressed())
 	{
 		this->state.color2 = rand_vec3();
 	}
+	// Resets the particles using the init compute shader
 	if (r.is_pressed())
 	{
 		this->init_particles();
 	}
+	// Shows debug info on screen
 	if (ctrl.is_pressed())
 	{
 		this->state.debug = !this->state.debug;
 	}
-	
 }

@@ -11,7 +11,7 @@ SSBO::SSBO(void) {}
 SSBO::SSBO(mlm::vec3 *data, GLsizeiptr data_size, GLenum usage)
 {
 	this->size = data_size;
-	glGenBuffers(1, &this->ID);
+	glGenBuffers(1, &this->id);
 	this->bind();
 
 	glBufferData(GL_SHADER_STORAGE_BUFFER, this->size, data, usage);
@@ -22,7 +22,7 @@ SSBO::SSBO(mlm::vec3 *data, GLsizeiptr data_size, GLenum usage)
 SSBO::SSBO(std::vector<mlm::vec3> &data, GLenum usage)
 {
 	this->size = data.size() * sizeof(mlm::vec3);
-	glGenBuffers(1, &this->ID);
+	glGenBuffers(1, &this->id);
 	this->bind();
 
 	glBufferData(GL_SHADER_STORAGE_BUFFER, this->size, data.data(), usage);
@@ -32,13 +32,13 @@ SSBO::SSBO(std::vector<mlm::vec3> &data, GLenum usage)
 
 void	SSBO::bind()
 {
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, this->ID);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, this->id);
 }
 
 void	SSBO::bind_base(GLuint index)
 {
 	this->bind();
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, index, this->ID);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, index, this->id);
 	this->unbind();
 }
 
@@ -49,5 +49,5 @@ void	SSBO::unbind()
 
 void	SSBO::del()
 {
-	glDeleteBuffers(1, &this->ID);
+	glDeleteBuffers(1, &this->id);
 }

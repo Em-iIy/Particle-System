@@ -14,7 +14,7 @@ Created on: 16/01/2025
 class FrameBuffer
 {
 public:
-	GLuint			ID;
+	GLuint			id;
 	GLsizei 		width;
 	GLsizei 		height;
 	Tex2d			render_texture;

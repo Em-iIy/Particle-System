@@ -13,7 +13,7 @@ Created on: 23/12/2024
 class SSBO
 {
 public:
-	GLuint		ID;
+	GLuint		id;
 	GLsizeiptr	size;
 
 	SSBO(void);

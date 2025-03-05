@@ -10,13 +10,6 @@ Created on: 16/12/2024
 
 #include "App.hpp"
 
-float		g_delta_time = 0.0f;
-
-mlm::vec3	rand_vec3()
-{
-	return (mlm::vec3(rand() / 2147483648.0f, rand() / 2147483648.0f, rand() / 2147483648.0f));
-}
-
 int main(int argc, char **argv)
 {
 	if (argc != 3)

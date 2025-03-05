@@ -6,12 +6,12 @@ RenderBuffer::RenderBuffer()
 
 void	RenderBuffer::generate()
 {
-	glGenRenderbuffers(1, &this->ID);
+	glGenRenderbuffers(1, &this->id);
 }
 
 void	RenderBuffer::bind()
 {
-	glBindRenderbuffer(GL_RENDERBUFFER, this->ID);
+	glBindRenderbuffer(GL_RENDERBUFFER, this->id);
 }
 
 void	RenderBuffer::storage(GLenum internal_format, GLsizei width, GLsizei height)
@@ -26,5 +26,5 @@ void	RenderBuffer::unbind()
 
 void	RenderBuffer::del()
 {
-	glDeleteRenderbuffers(1, &this->ID);
+	glDeleteRenderbuffers(1, &this->id);
 }
