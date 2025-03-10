@@ -53,14 +53,15 @@ mlm::vec3	App::mouse_to_screen()
 */
 void	App::process_input()
 {
-	static Key esc(this->window, GLFW_KEY_ESCAPE);
-	static Key tab(this->window, GLFW_KEY_TAB);
-	static Key space(this->window, GLFW_KEY_SPACE);
-	static Key c(this->window, GLFW_KEY_C);
-	static Key c1(this->window, GLFW_KEY_1);
-	static Key c2(this->window, GLFW_KEY_2);
-	static Key r(this->window, GLFW_KEY_R);
-	static Key ctrl(this->window, GLFW_KEY_LEFT_CONTROL);
+	static Key	esc(this->window, GLFW_KEY_ESCAPE);
+	static Key	tab(this->window, GLFW_KEY_TAB);
+	static Key	space(this->window, GLFW_KEY_SPACE);
+	static Key	c(this->window, GLFW_KEY_C);
+	static Key	c1(this->window, GLFW_KEY_1);
+	static Key	c2(this->window, GLFW_KEY_2);
+	static Key	r(this->window, GLFW_KEY_R);
+	static Key	l_ctrl(this->window, GLFW_KEY_LEFT_CONTROL);
+	static Key	l_shift(this->window, GLFW_KEY_LEFT_SHIFT);
 
 	// Update key status
 	esc.update();
@@ -70,7 +71,8 @@ void	App::process_input()
 	c1.update();
 	c2.update();
 	r.update();
-	ctrl.update();
+	l_ctrl.update();
+	l_shift.update();
 
 	// Closes the program
 	if (esc.is_pressed())
@@ -116,8 +118,15 @@ void	App::process_input()
 		this->init_particles();
 	}
 	// Shows debug info on screen
-	if (ctrl.is_pressed())
+	if (l_ctrl.is_pressed())
 	{
 		this->state.debug = !this->state.debug;
+	}
+	if (l_shift.is_pressed())
+	{
+		if (this->settings.post_processing == true)
+		{
+			this->state.post_processing = !this->state.post_processing;
+		}
 	}
 }

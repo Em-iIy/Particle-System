@@ -46,6 +46,7 @@ State::State(Config &config): pause(false), debug(false), grav(false)
 	this->mouse_coords = mlm::vec2(*(config.width) / 2.0f, *(config.height) / 2.0f);
 	this->color1 = *(config.color1);
 	this->color2 = *(config.color2);
+	this->post_processing = *(config.post_processing);
 }
 
 Initialized::Initialized(): gl(false), window(false), shaders(false), buffers(false), text(false)

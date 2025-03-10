@@ -52,6 +52,7 @@ struct State {
 	bool		debug;
 	bool		grav;
 	mlm::vec3	gravity;
+	bool		post_processing;
 
 	mlm::vec3	color1;
 	mlm::vec3	color2;

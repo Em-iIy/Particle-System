@@ -126,7 +126,7 @@ void	App::render()
 {
 	timer::start();
 	// Bind the post processing frame buffer if it is set to true
-	if (this->settings.post_processing)
+	if (this->state.post_processing)
 	{
 		this->post_proc_frame_buffer.bind();
 		glEnable(GL_DEPTH_TEST);
@@ -157,7 +157,7 @@ void	App::render()
 	
 	timer::start();
 	// Run the post processing shader if enabled
-	if (this->settings.post_processing)
+	if (this->state.post_processing)
 		this->post_processing();
 
 	this->metrics.post_processing_timer = timer::ms_elapsed();
