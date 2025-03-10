@@ -51,7 +51,7 @@ State::State(Config &config): pause(false), debug(false), grav(false)
 Initialized::Initialized(): gl(false), window(false), shaders(false), buffers(false), text(false)
 {}
 
-Metrics::Metrics(): frame_counter(0), frame_time(0.0f), render_timer(0.0f), compute_timer(0.0f), post_processing_timer(0.0f)
+Metrics::Metrics(): frame_counter(0), frame_time(0.0f), fps(0.0f), render_timer(0.0f), compute_timer(0.0f), post_processing_timer(0.0f)
 {}
 
 App::App()
