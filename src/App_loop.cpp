@@ -101,17 +101,29 @@ void	App::post_processing()
 void	App::render_info()
 {
 	std::string info = "";
-	if (this->state.pause)
-		info += "Paused\n";
-
 	info += "Fps: " + std::to_string((int)this->metrics.fps);
+	if (this->state.pause)
+	{
+		info += "\nPaused";
+		info += "\nEnd simulation:         escape";
+		info += "\nReset simulation:       r";
+		info += "\nToggle pause:           space";
+		info += "\nToggle gravity:         tab";
+		info += "\nToggle postprocessing:  left shift";
+		info += "\nToggle metrics:         left ctrl";
+		info += "\nChange color1:          1";
+		info += "\nChange color2:          2";
+		info += "\nChange colors:          c";
+	}
+
 	// Print 'debug' info if enabled
 	if (this->state.debug)
 	{
+		info += "\nParticles: " + std::to_string(this->settings.particle_count);
 		info += "\nCompute: " + std::to_string(this->metrics.compute_timer) + "ms";
 		info += "\nRender: " + std::to_string(this->metrics.render_timer) + "ms";
+		info += "\nPost Processing: "; this->state.post_processing ? info += "on": info += "off";
 		info += "\nPost processing: " + std::to_string(this->metrics.post_processing_timer) + "ms";
-		info += "\nParticles: " + std::to_string(this->settings.particle_count);
 		info += "\nGravity: "; this->state.grav ? info += "on": info += "off";
 		info += "\nColor1 = R(" + std::to_string(int(this->state.color1.x * 255.0f)) + ") G(" + std::to_string(int(this->state.color1.y * 255.0f)) + ") B(" + std::to_string(int(this->state.color1.z * 255.0f)) + ")";
 		info += "\nColor2 = R(" + std::to_string(int(this->state.color2.x * 255.0f)) + ") G(" + std::to_string(int(this->state.color2.y * 255.0f)) + ") B(" + std::to_string(int(this->state.color2.z * 255.0f)) + ")";
