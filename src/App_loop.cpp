@@ -71,7 +71,7 @@ void	App::update()
 		if (this->state.debug)
 			glFinish();
 	}
-	this->metrics.compute_timer = timer::u_elapsed();
+	this->metrics.compute_timer = timer::ms_elapsed();
 }
 
 /*
@@ -108,9 +108,9 @@ void	App::render_info()
 	// Print 'debug' info if enabled
 	if (this->state.debug)
 	{
-		info += "\nCompute: " + std::to_string(this->metrics.compute_timer) + "us";
-		info += "\nRender: " + std::to_string(this->metrics.render_timer) + "us";
-		info += "\nPost processing: " + std::to_string(this->metrics.post_processing_timer) + "us";
+		info += "\nCompute: " + std::to_string(this->metrics.compute_timer) + "ms";
+		info += "\nRender: " + std::to_string(this->metrics.render_timer) + "ms";
+		info += "\nPost processing: " + std::to_string(this->metrics.post_processing_timer) + "ms";
 		info += "\nParticles: " + std::to_string(this->settings.particle_count);
 		info += "\nGravity: "; this->state.grav ? info += "on": info += "off";
 		info += "\nColor1 = R(" + std::to_string(int(this->state.color1.x * 255.0f)) + ") G(" + std::to_string(int(this->state.color1.y * 255.0f)) + ") B(" + std::to_string(int(this->state.color1.z * 255.0f)) + ")";
@@ -153,14 +153,14 @@ void	App::render()
 	glDrawArrays(GL_POINTS, 0, this->settings.particle_count);
 	if (this->state.debug)
 		glFinish();
-	this->metrics.render_timer = timer::u_elapsed();
+	this->metrics.render_timer = timer::ms_elapsed();
 	
 	timer::start();
 	// Run the post processing shader if enabled
 	if (this->settings.post_processing)
 		this->post_processing();
 
-	this->metrics.post_processing_timer = timer::u_elapsed();
+	this->metrics.post_processing_timer = timer::ms_elapsed();
 
 	this->render_info();
 
