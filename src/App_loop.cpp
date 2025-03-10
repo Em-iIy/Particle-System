@@ -68,6 +68,8 @@ void	App::update()
 		// Run the compute shader
 		glDispatchCompute((GLuint)this->settings.particle_count / WORKGROUP_SIZE, 1, 1);
 		glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
+		if (this->state.debug)
+			glFinish();
 	}
 	this->metrics.compute_timer = timer::u_elapsed();
 }
@@ -89,6 +91,8 @@ void	App::post_processing()
 	this->post_proc_frame_buffer.render_texture.bind();
 	this->post_proc_vao.bind();
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	if (this->state.debug)
+		glFinish();
 }
 
 /*
@@ -101,13 +105,17 @@ void	App::render_info()
 		info += "Paused\n";
 
 	info += "Fps: " + std::to_string((int)this->metrics.fps);
-	info += "\nCompute: " + std::to_string(this->metrics.compute_timer) + "us";
-	info += "\nRender: " + std::to_string(this->metrics.render_timer) + "us";
-	info += "\nPost processing: " + std::to_string(this->metrics.post_processing_timer) + "us";
-	info += "\nParticles: " + std::to_string(this->settings.particle_count);
-	info += "\nGravity: "; this->state.grav ? info += "on": info += "off";
-	info += "\nColor1 = R(" + std::to_string(int(this->state.color1.x * 255.0f)) + ") G(" + std::to_string(int(this->state.color1.y * 255.0f)) + ") B(" + std::to_string(int(this->state.color1.z * 255.0f)) + ")";
-	info += "\nColor2 = R(" + std::to_string(int(this->state.color2.x * 255.0f)) + ") G(" + std::to_string(int(this->state.color2.y * 255.0f)) + ") B(" + std::to_string(int(this->state.color2.z * 255.0f)) + ")";
+	// Print 'debug' info if enabled
+	if (this->state.debug)
+	{
+		info += "\nCompute: " + std::to_string(this->metrics.compute_timer) + "us";
+		info += "\nRender: " + std::to_string(this->metrics.render_timer) + "us";
+		info += "\nPost processing: " + std::to_string(this->metrics.post_processing_timer) + "us";
+		info += "\nParticles: " + std::to_string(this->settings.particle_count);
+		info += "\nGravity: "; this->state.grav ? info += "on": info += "off";
+		info += "\nColor1 = R(" + std::to_string(int(this->state.color1.x * 255.0f)) + ") G(" + std::to_string(int(this->state.color1.y * 255.0f)) + ") B(" + std::to_string(int(this->state.color1.z * 255.0f)) + ")";
+		info += "\nColor2 = R(" + std::to_string(int(this->state.color2.x * 255.0f)) + ") G(" + std::to_string(int(this->state.color2.y * 255.0f)) + ") B(" + std::to_string(int(this->state.color2.z * 255.0f)) + ")";
+	}
 	render_text(this->font, info, 0.0f, this->settings.height - 40.0f, 0.5f, mlm::vec3(1.0));
 }
 
@@ -143,17 +151,18 @@ void	App::render()
 	// Render the particles
 	this->particle_vao.bind();
 	glDrawArrays(GL_POINTS, 0, this->settings.particle_count);
+	if (this->state.debug)
+		glFinish();
 	this->metrics.render_timer = timer::u_elapsed();
 	
 	timer::start();
 	// Run the post processing shader if enabled
 	if (this->settings.post_processing)
 		this->post_processing();
-	
+
 	this->metrics.post_processing_timer = timer::u_elapsed();
-	// Print 'debug' info if enabled
-	if (this->state.debug)
-		this->render_info();
+
+	this->render_info();
 
 	// Swap to the 2nd main render frame buffer and check for events
 	glfwSwapBuffers(window);
