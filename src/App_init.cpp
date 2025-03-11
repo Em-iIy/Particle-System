@@ -103,13 +103,13 @@ void	App::init_gl()
 void	App::init_shaders(Config &config)
 {
 	std::cout << "Initializing shaders..." << std::endl;
+	this->initialized.shaders = true;
 	this->particle_render = Shader(config.particle_vert->c_str(), config.particle_frag->c_str());
 	this->particle_init = ComputeShader(config.particle_init_comp->c_str());
 	this->particle_physics = ComputeShader(config.particle_physics_comp->c_str());
 	if (this->settings.post_processing == true)
 		this->post_proc_shader = Shader(config.post_processing_vert->c_str(), config.post_processing_frag->c_str());
 	
-	this->initialized.shaders = true;
 }
 
 /*

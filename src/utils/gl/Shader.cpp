@@ -24,7 +24,16 @@ Shader::Shader(const char *vertex_file_name, const char *fragment_file_name)
 		free(vertex_source);
 		return ;
 	}
-	this->load(vertex_source, fragment_source);
+	try
+	{
+		this->load(vertex_source, fragment_source);
+	}
+	catch(const std::exception& e)
+	{
+		free(vertex_source);
+		free(fragment_source);
+		throw std::exception();
+	}
 	free(vertex_source);
 	free(fragment_source);
 

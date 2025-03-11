@@ -13,8 +13,17 @@ ComputeShader::ComputeShader(const char *file_name)
 	char *compute_source = read_file(file_name);
 	if (!compute_source)
 		return ;
-	this->load(compute_source);
+	try
+	{
+		this->load(compute_source);
+	}
+	catch(const std::exception& e)
+	{
+		free(compute_source);
+		throw std::exception();
+	}
 	free(compute_source);
+	
 }
 
 
